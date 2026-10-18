@@ -261,20 +261,9 @@ hr.div{border:none;border-top:1px solid #eff1f5;margin:14px 0}
 
   <hr class="div"/>
 
-  <!-- METRIC SLOTS -->
-  <div id="metricSlots" style="display:flex;flex-direction:column;gap:12px;margin-bottom:12px"></div>
-  <div class="btn-row">
-    <button class="btn btn-primary btn-sm" id="addMetricBtn" onclick="addMetricSlot()">+ Add Metric</button>
-    <span style="font-size:11px;color:var(--grey)" id="slotCountNote">1 of 3 metrics added</span>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════
-     SECTION 2 - DURATION (shared)
-════════════════════════════════════════════════════════════ -->
-<div class="card">
-  <div class="card-header"><span class="snum">2</span><h2>Sponsorship Duration</h2></div>
-  <p class="section-sub">Duration is shared across all metrics. Uplift % is set per metric in each metric card.</p>
+  <!-- SPONSORSHIP DURATION (set before metrics) -->
+  <div style="font-size:12px;font-weight:700;color:var(--midnight);margin-bottom:4px">Sponsorship Duration</div>
+  <p style="font-size:11px;color:var(--grey);margin-bottom:12px">Duration is shared across all metrics. Uplift % is set per metric in each metric card.</p>
   <div class="fr2">
     <div>
       <label style="margin-bottom:7px;display:block">Duration (months)</label>
@@ -302,6 +291,15 @@ hr.div{border:none;border-top:1px solid #eff1f5;margin:14px 0}
   <div style="margin-top:12px;padding:12px;background:var(--off-white);border-radius:9px;font-size:12px;color:var(--steel)">
     Duration: <strong id="displayDur" style="color:var(--midnight)">3 months</strong>
   </div>
+
+  <hr class="div"/>
+
+  <!-- METRIC SLOTS -->
+  <div id="metricSlots" style="display:flex;flex-direction:column;gap:12px;margin-bottom:12px"></div>
+  <div class="btn-row">
+    <button class="btn btn-primary btn-sm" id="addMetricBtn" onclick="addMetricSlot()">+ Add Metric</button>
+    <span style="font-size:11px;color:var(--grey)" id="slotCountNote">1 of 3 metrics added</span>
+  </div>
 </div>
 
 <!-- Section 6 removed - scenario inputs moved into each metric card -->
@@ -313,10 +311,10 @@ hr.div{border:none;border-top:1px solid #eff1f5;margin:14px 0}
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
-     SECTION 3 - PAYOUT STRUCTURE
+     SECTION 2 - PAYOUT STRUCTURE
 ════════════════════════════════════════════════════════════ -->
 <div class="card">
-  <div class="card-header"><span class="snum">3</span><h2>Payout Structure</h2></div>
+  <div class="card-header"><span class="snum">2</span><h2>Payout Structure</h2></div>
   <p class="section-sub">Each metric has its own payout config (in its metric card). Select how payouts combine below.</p>
 
   <!-- UPFRONT (shared) -->
@@ -379,10 +377,10 @@ hr.div{border:none;border-top:1px solid #eff1f5;margin:14px 0}
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
-     SECTION 4 - ROI
+     SECTION 3 - ROI
 ════════════════════════════════════════════════════════════ -->
 <div class="card">
-  <div class="card-header"><span class="snum">4</span><h2>ROI and Business Justification</h2></div>
+  <div class="card-header"><span class="snum">3</span><h2>ROI and Business Justification</h2></div>
   <p class="section-sub">Optional. Estimate revenue vs sponsorship cost to validate commercial viability.</p>
   <div class="fr2">
     <div class="fg">
@@ -402,7 +400,7 @@ hr.div{border:none;border-top:1px solid #eff1f5;margin:14px 0}
       <input type="number" id="sponsorCost" placeholder="e.g. 5000" oninput="this.dataset.manualOverride='1';recalcROI()" style="flex:1"/>
       <button class="btn btn-secondary btn-sm" onclick="useMaxBudget()" style="white-space:nowrap;flex-shrink:0">&#8593; Use Max Budget</button>
     </div>
-    <p style="font-size:10px;color:var(--steel);margin-top:4px">Tip: Use <strong>Best Case Total</strong> from Section 3 as cost ceiling. <span id="maxBudgetHint" style="color:var(--dark-yellow);font-weight:700"></span></p>
+    <p style="font-size:10px;color:var(--steel);margin-top:4px">Tip: Use <strong>Best Case Total</strong> from Section 2 as cost ceiling. <span id="maxBudgetHint" style="color:var(--dark-yellow);font-weight:700"></span></p>
   </div>
   <hr class="div"/>
   <div class="stat-grid">
@@ -424,7 +422,7 @@ hr.div{border:none;border-top:1px solid #eff1f5;margin:14px 0}
 
   <!-- LIVE SUMMARY -->
   <div class="card card-midnight">
-    <div class="card-header"><span class="snum" style="background:var(--yellow)">5</span><h2>Live Summary</h2></div>
+    <div class="card-header"><span class="snum" style="background:var(--yellow)">4</span><h2>Live Summary</h2></div>
 
     <div class="sum-block">
       <div class="sum-blk-label">Metrics</div>
@@ -459,7 +457,7 @@ hr.div{border:none;border-top:1px solid #eff1f5;margin:14px 0}
 
   <!-- EXPORT -->
   <div class="card card-yellow">
-    <div class="card-header"><span class="snum">6</span><h2>Export Summary</h2></div>
+    <div class="card-header"><span class="snum">5</span><h2>Export Summary</h2></div>
     <p style="font-size:11px;color:var(--steel);margin-bottom:12px">Generate the Exness sponsorship request format for JIRA submission.</p>
     <button class="btn btn-dark" style="width:100%;margin-bottom:8px;justify-content:center" onclick="generateSummary()">Generate Full Summary</button>
     <a href="https://jira.exness.io/servicedesk/customer/portal/36/create/1088" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width:100%;margin-bottom:4px;justify-content:center;display:flex">&#128196; Partner Sponsorship Request</a>
@@ -475,9 +473,9 @@ hr.div{border:none;border-top:1px solid #eff1f5;margin:14px 0}
     </div>
   </div>
 
-  <!-- SECTION 7: BD OPS VALIDATION -->
+  <!-- SECTION 6: BD OPS VALIDATION -->
   <div class="card" style="border:2px solid #b2d4be">
-    <div class="card-header"><span class="snum">7</span><h2>BD Ops Validation</h2></div>
+    <div class="card-header"><span class="snum">6</span><h2>BD Ops Validation</h2></div>
     <p style="font-size:11px;color:var(--steel);margin-bottom:12px">Import the JSON file attached by the PRM to the JIRA task to validate data independently.</p>
     <button class="btn btn-primary" style="width:100%;justify-content:center;background:var(--pale-green);color:#2d5a3d;border:1.5px solid #b2d4be" onclick="document.getElementById('bdOpsImportInput').click()">&#128228; Import JSON (BD Ops validation)</button>
     <input type="file" id="bdOpsImportInput" accept=".json" style="display:none" onchange="importJSON(event)"/>
@@ -494,11 +492,11 @@ hr.div{border:none;border-top:1px solid #eff1f5;margin:14px 0}
   <div class="card">
     <div class="card-header"><span class="snum" style="background:var(--steel);color:var(--white)">?</span><h2>Quick Guide</h2></div>
     <div style="font-size:11px;color:var(--steel);line-height:1.9">
-      <p><strong style="color:var(--midnight)">1.</strong> Fill partner details and add metrics (up to 3).</p>
+      <p><strong style="color:var(--midnight)">1.</strong> Fill partner details, then set Duration and Rounding in Section 1.</p>
       <p><strong style="color:var(--midnight)">2.</strong> Each metric card has its own data table, stats, baseline, uplift, and payout.</p>
-      <p><strong style="color:var(--midnight)">3.</strong> Set shared Duration and Scenario % in Sections 5-6.</p>
-      <p><strong style="color:var(--midnight)">4.</strong> Choose Payout Logic in Section 3.</p>
-      <p><strong style="color:var(--midnight)">5.</strong> Fill ROI in Section 4, then Generate Summary.</p>
+      <p><strong style="color:var(--midnight)">3.</strong> Add metrics (up to 3). Scenario % is set inside each metric card.</p>
+      <p><strong style="color:var(--midnight)">4.</strong> Choose Payout Logic in Section 2.</p>
+      <p><strong style="color:var(--midnight)">5.</strong> Fill ROI in Section 3, then Generate Summary.</p>
       <hr class="div" style="margin:8px 0"/>
       <p style="color:var(--grey)">All data is processed locally in your browser. Nothing is transmitted.</p>
     </div>
@@ -1452,7 +1450,7 @@ function updateSumRevenue() {
 
 function useMaxBudget() {
   const max = state.maxBudgetBest;
-  if (!max) { alert('Calculate payout first in Section 3.'); return; }
+  if (!max) { alert('Calculate payout first in Section 2.'); return; }
   document.getElementById('sponsorCost').value = max.toFixed(2);
   recalcROI();
 }
@@ -1569,7 +1567,7 @@ function generateSummary() {
   const estRevenue = parseFloat(document.getElementById('estRevInput').value)||0;
   const sponsorCost = parseFloat(document.getElementById('sponsorCost').value)||0;
   const roiPct = sponsorCost>0&&estRevenue>0 ? ((estRevenue-sponsorCost)/sponsorCost*100).toFixed(1) : 'N/A';
-  const revLogic = document.getElementById('revLogic').value || '<Fill in Section 4>';
+  const revLogic = document.getElementById('revLogic').value || '<Fill in Section 3>';
 
   const fmtT = v => roundMode!=='none' ? Math.round(v).toLocaleString('en-US') : fmt(v,1);
 
@@ -1635,8 +1633,8 @@ ${metricExpected}
 
 ROI calculation logic
   Total Sponsorship Cost                  :  $${fmt(sponsorCost||state.maxBudgetBest,0)}
-  Estimated Revenue                       :  ${estRevenue>0?'$'+fmt(estRevenue,0):'<Fill in Section 4>'}
-  ROI%                                    :  ${roiPct!=='N/A'?roiPct+'%':'N/A - fill Section 4>'}
+  Estimated Revenue                       :  ${estRevenue>0?'$'+fmt(estRevenue,0):'<Fill in Section 3>'}
+  ROI%                                    :  ${roiPct!=='N/A'?roiPct+'%':'N/A - fill Section 3>'}
   Revenue Logic                           :  ${revLogic}
 
 Supporting files
