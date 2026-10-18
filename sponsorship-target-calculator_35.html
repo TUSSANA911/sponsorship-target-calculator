@@ -1,0 +1,1959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Sponsorship Target Calculator v2 | Exness PRM</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --yellow:#ffde02;--dark-yellow:#ccb202;--light-yellow:#fffce6;
+  --midnight:#070e20;--steel:#47667b;--pale-green:#e1ebe5;
+  --grey:#6d6e73;--off-white:#f5f5f5;--white:#ffffff;--mainly-blue:#202533;
+  --r:14px;--shadow:0 2px 16px rgba(7,14,32,.08);--t:.18s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:var(--off-white);color:var(--midnight);font-size:14px;line-height:1.6}
+
+/* ── HERO ── */
+.hero{background:var(--midnight);padding:32px 40px 24px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.hero h1{font-size:24px;font-weight:800;color:var(--yellow);letter-spacing:-.5px}
+.hero p{color:rgba(255,255,255,.6);font-size:12px;margin-top:5px;max-width:520px}
+.hero-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.hero-badge{background:rgba(255,222,2,.12);border:1px solid rgba(255,222,2,.3);color:var(--yellow);font-size:10px;font-weight:700;padding:4px 12px;border-radius:100px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+.hero-conf{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);font-size:11px;font-weight:500;padding:5px 12px;border-radius:100px;text-decoration:none;transition:all var(--t)}
+.hero-conf:hover{background:rgba(255,222,2,.15);border-color:rgba(255,222,2,.4);color:var(--yellow)}
+
+/* ── LAYOUT ── */
+.wrap{max-width:1340px;margin:0 auto;padding:24px 20px 60px;display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start}
+.main-col{display:flex;flex-direction:column;gap:20px}
+.side-col{display:flex;flex-direction:column;gap:16px;position:sticky;top:20px}
+
+/* ── CARD ── */
+.card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:22px}
+.card-yellow{background:var(--light-yellow);border:1.5px solid rgba(204,178,2,.2)}
+.card-dark{background:var(--mainly-blue);color:var(--white)}
+.card-midnight{background:var(--midnight);color:var(--white)}
+.card-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.card-header .snum{background:var(--yellow);color:var(--midnight);font-weight:800;font-size:11px;width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-header h2{font-size:14px;font-weight:700;color:var(--midnight)}
+.card-dark .card-header h2,.card-midnight .card-header h2{color:var(--white)}
+.section-sub{font-size:11px;color:var(--grey);margin-top:-10px;margin-bottom:14px}
+
+/* ── METRIC CARD (per-metric accordion) ── */
+.metric-slot{border:2px solid #e0e4ea;border-radius:12px;overflow:hidden;transition:border-color var(--t)}
+.metric-slot.active{border-color:var(--dark-yellow)}
+.metric-slot-header{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--off-white);cursor:pointer;user-select:none}
+.metric-slot-header:hover{background:var(--light-yellow)}
+.slot-badge{background:var(--yellow);color:var(--midnight);font-size:10px;font-weight:800;padding:3px 10px;border-radius:100px}
+.slot-title{font-size:13px;font-weight:700;color:var(--midnight);flex:1}
+.slot-remove{background:none;border:none;color:var(--grey);font-size:18px;cursor:pointer;padding:0 4px;border-radius:4px;transition:all var(--t);line-height:1}
+.slot-remove:hover{background:#fde8e8;color:#c0392b}
+.slot-chevron{font-size:12px;color:var(--grey);transition:transform var(--t)}
+.slot-chevron.open{transform:rotate(180deg)}
+.metric-slot-body{padding:16px;border-top:1px solid #f0f2f5;display:none}
+.metric-slot-body.open{display:block}
+
+/* ── METRIC GRID ── */
+.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:14px}
+.metric-btn{background:var(--off-white);border:1.5px solid #e0e4ea;border-radius:9px;padding:8px 6px;font-family:'Poppins',sans-serif;font-size:11px;font-weight:600;color:var(--steel);cursor:pointer;transition:all var(--t);text-align:center}
+.metric-btn:hover{border-color:var(--dark-yellow);background:var(--light-yellow);color:var(--midnight)}
+.metric-btn.active{background:var(--yellow);border-color:var(--dark-yellow);color:var(--midnight);font-weight:700}
+.metric-def{background:var(--light-yellow);border:1px solid rgba(204,178,2,.25);border-radius:9px;padding:10px 12px;font-size:11px;color:var(--mainly-blue);display:none;margin-bottom:12px}
+.metric-def.show{display:block}
+
+/* ── TABS ── */
+.tab-bar{display:flex;gap:4px;background:var(--off-white);border-radius:9px;padding:3px;margin-bottom:14px}
+.tab-btn{flex:1;padding:7px 8px;border:none;border-radius:7px;font-family:'Poppins',sans-serif;font-size:11px;font-weight:600;color:var(--grey);background:transparent;cursor:pointer;transition:all var(--t)}
+.tab-btn.active{background:var(--white);color:var(--midnight);box-shadow:0 1px 6px rgba(0,0,0,.1)}
+
+/* ── TABLE ── */
+.perf-table{width:100%;border-collapse:collapse;font-size:11px}
+.perf-table th{background:var(--mainly-blue);color:var(--white);padding:7px 9px;text-align:left;font-weight:600;font-size:10px}
+.perf-table th:first-child{border-radius:7px 0 0 0}.perf-table th:last-child{border-radius:0 7px 0 0}
+.perf-table td{padding:6px 9px;border-bottom:1px solid #f0f2f5;vertical-align:middle}
+.perf-table tr:hover td{background:var(--light-yellow)}
+.perf-table td input{border:none;background:transparent;width:100%;font-family:'Poppins',sans-serif;font-size:11px;outline:none;color:var(--midnight)}
+.perf-table td input:focus{background:var(--light-yellow);border-radius:4px;padding:2px 4px}
+
+/* ── STAT GRID ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat-box{background:var(--off-white);border-radius:9px;padding:10px 12px}
+.stat-box.hi{background:var(--yellow)}
+.stat-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--grey)}
+.stat-box.hi .stat-label{color:var(--mainly-blue)}
+.stat-value{font-size:16px;font-weight:700;color:var(--midnight);letter-spacing:-.3px}
+
+/* ── CHIP ── */
+.chip-group{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:5px 12px;border-radius:100px;border:1.5px solid #e0e4ea;background:var(--off-white);font-family:'Poppins',sans-serif;font-size:11px;font-weight:600;color:var(--steel);cursor:pointer;transition:all var(--t)}
+.chip:hover{border-color:var(--dark-yellow);color:var(--midnight)}
+.chip.active{background:var(--yellow);border-color:var(--dark-yellow);color:var(--midnight)}
+
+/* ── FORM ── */
+label{font-size:11px;font-weight:600;color:var(--steel);display:block;margin-bottom:4px}
+input[type=text],input[type=number],select,textarea{width:100%;padding:8px 11px;border:1.5px solid #e0e4ea;border-radius:7px;font-family:'Poppins',sans-serif;font-size:12px;color:var(--midnight);background:var(--white);outline:none;transition:border-color var(--t)}
+input:focus,select:focus,textarea:focus{border-color:var(--yellow)}
+textarea{resize:vertical;min-height:60px}
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 16px;border-radius:8px;border:none;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all var(--t);display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+.btn-primary{background:var(--yellow);color:var(--midnight)}.btn-primary:hover{background:var(--dark-yellow)}
+.btn-secondary{background:var(--off-white);color:var(--steel);border:1.5px solid #e0e4ea}.btn-secondary:hover{border-color:var(--dark-yellow);color:var(--midnight)}
+.btn-dark{background:var(--midnight);color:var(--yellow)}.btn-dark:hover{background:var(--mainly-blue)}
+.btn-ghost{background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.15)}.btn-ghost:hover{background:rgba(255,222,2,.15);border-color:rgba(255,222,2,.4);color:var(--yellow)}
+.btn-sm{padding:5px 11px;font-size:11px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn-icon{background:none;border:none;cursor:pointer;color:var(--grey);font-size:15px;padding:2px 4px;border-radius:4px;transition:all var(--t)}
+.btn-icon:hover{background:#fde8e8;color:#c0392b}
+
+/* ── TOGGLE ── */
+.tog-wrap{display:flex;align-items:center;gap:9px;margin:6px 0}
+.tog{position:relative;width:36px;height:20px;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0}
+.tog-sl{position:absolute;inset:0;background:#d0d5de;border-radius:100px;cursor:pointer;transition:.2s}
+.tog-sl::before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:white;border-radius:50%;transition:.2s}
+.tog input:checked+.tog-sl{background:var(--yellow)}
+.tog input:checked+.tog-sl::before{transform:translateX(16px)}
+.tog-label{font-size:11px;color:var(--steel)}
+
+/* ── ALERT ── */
+.alert{border-radius:8px;padding:9px 12px;font-size:11px;margin-bottom:8px;display:flex;gap:7px;align-items:flex-start;line-height:1.5}
+.alert-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.alert-warn{background:#fff8e1;border:1px solid #ffe082;color:#7a5f00}
+.alert-info{background:var(--pale-green);border:1px solid #b2d4be;color:#2d5a3d}
+.alert-danger{background:#fde8e8;border:1px solid #f5c6c6;color:#7a0000}
+.alert-approval{background:#e8eaf6;border:1px solid #9fa8da;color:#283593}
+
+/* ── SCENARIO ── */
+.scenario-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.sc-card{border-radius:10px;padding:14px}
+.sc-worst{background:#fde8e8;border:1.5px solid #f5c6c6}
+.sc-base{background:var(--pale-green);border:1.5px solid #b2d4be}
+.sc-best{background:var(--light-yellow);border:1.5px solid rgba(204,178,2,.3)}
+.sc-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--grey)}
+.sc-pct{font-size:20px;font-weight:800;letter-spacing:-.5px}
+.sc-worst .sc-pct{color:#c0392b}.sc-base .sc-pct{color:#27ae60}.sc-best .sc-pct{color:var(--dark-yellow)}
+.sc-detail{font-size:10px;color:var(--steel);line-height:1.7;margin-top:4px}
+
+/* ── PAYOUT LOGIC ── */
+.plogic-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px}
+.plogic-btn{border:2px solid #e0e4ea;border-radius:10px;padding:12px;cursor:pointer;transition:all var(--t);background:var(--off-white);text-align:left}
+.plogic-btn:hover{border-color:var(--dark-yellow);background:var(--light-yellow)}
+.plogic-btn.active{border-color:var(--dark-yellow);background:var(--light-yellow)}
+.plogic-btn.active .plogic-icon{background:var(--yellow)}
+.plogic-icon{width:28px;height:28px;border-radius:7px;background:var(--off-white);border:1.5px solid #e0e4ea;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:7px;transition:all var(--t)}
+.plogic-name{font-size:11px;font-weight:700;color:var(--midnight)}
+.plogic-desc{font-size:10px;color:var(--grey);line-height:1.4;margin-top:2px}
+
+/* ── TIER TABLE ── */
+.tier-table{width:100%;border-collapse:collapse;font-size:11px}
+.tier-table th{background:var(--mainly-blue);color:var(--white);padding:6px 9px;font-size:10px;font-weight:600;text-align:left}
+.tier-table th:first-child{border-radius:7px 0 0 0}.tier-table th:last-child{border-radius:0 7px 0 0}
+.tier-table td{padding:5px 7px;border-bottom:1px solid #f0f2f5}
+.tier-table td input{font-size:11px}
+
+/* ── COMBINED PAYOUT ── */
+.combined-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px}
+.combined-cell{border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:4px}
+.combined-worst{background:#fde8e8;border:1.5px solid #f5c6c6}
+.combined-base{background:var(--pale-green);border:1.5px solid #b2d4be}
+.combined-best{background:var(--light-yellow);border:1.5px solid rgba(204,178,2,.3)}
+.combined-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--grey)}
+.combined-total{font-size:20px;font-weight:800;letter-spacing:-.5px}
+.combined-worst .combined-total{color:#c0392b}
+.combined-base .combined-total{color:#27ae60}
+.combined-best .combined-total{color:var(--dark-yellow)}
+.combined-detail{font-size:10px;color:var(--steel);line-height:1.7}
+
+/* ── SIDEBAR ── */
+.sum-block{background:rgba(255,255,255,.07);border-radius:9px;padding:10px 12px;margin-bottom:8px}
+.sum-blk-label{font-size:9px;color:rgba(255,255,255,.45);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.sum-blk-val{font-size:16px;font-weight:700;color:var(--yellow)}
+.sum-blk-sub{font-size:10px;color:rgba(255,255,255,.5);margin-top:2px}
+.sum-metric-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:11px}
+.sum-metric-row:last-child{border-bottom:none}
+.sum-metric-name{color:rgba(255,255,255,.7);font-weight:600}
+.sum-metric-val{color:var(--yellow);font-weight:700}
+
+/* ── EXPORT BOX ── */
+.summary-output{background:var(--midnight);border-radius:10px;padding:16px;color:var(--white);font-size:11px;line-height:1.8;white-space:pre-wrap;font-family:'Poppins',monospace;max-height:320px;overflow-y:auto}
+
+/* ── DIST CANVAS ── */
+#distContainer{background:var(--off-white);border-radius:10px;padding:14px;position:relative;margin-top:10px}
+
+/* ── GUIDE BOX ── */
+.guide-box{background:var(--light-yellow);border:1px solid rgba(204,178,2,.25);border-radius:9px;padding:12px 14px;margin-bottom:14px}
+.guide-box-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--dark-yellow);margin-bottom:6px}
+.guide-item{display:flex;gap:9px;align-items:flex-start;margin-bottom:6px}
+.guide-item:last-child{margin-bottom:0}
+.guide-item p{font-size:11px;color:var(--mainly-blue);line-height:1.5;margin:0}
+
+/* ── DIVIDER ── */
+hr.div{border:none;border-top:1px solid #eff1f5;margin:14px 0}
+
+/* ── ROI BAR ── */
+.roi-bar-wrap{background:var(--off-white);border-radius:6px;height:8px;overflow:hidden;margin:6px 0}
+.roi-bar-fill{height:100%;border-radius:6px;background:var(--yellow);transition:width .5s ease}
+
+/* ── UPLOAD ── */
+.upload-area{border:2px dashed #d0d5de;border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all var(--t)}
+.upload-area:hover{border-color:var(--dark-yellow);background:var(--light-yellow)}
+.upload-area p{font-size:11px;color:var(--grey)}
+#ssPreview{max-width:100%;border-radius:8px;margin-top:10px;display:none}
+
+/* ── TOOLTIP ── */
+[data-tip]{position:relative;cursor:help}
+[data-tip]::after{content:attr(data-tip);position:absolute;bottom:130%;left:50%;transform:translateX(-50%);background:var(--midnight);color:var(--white);font-size:10px;padding:5px 9px;border-radius:6px;white-space:normal;opacity:0;pointer-events:none;transition:opacity .15s;z-index:100;max-width:200px;text-align:center;line-height:1.4}
+[data-tip]:hover::after{opacity:1}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1060px){.wrap{grid-template-columns:1fr}.side-col{position:static}.metric-grid{grid-template-columns:repeat(3,1fr)}.stat-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.hero{padding:20px 14px}.wrap{padding:14px 10px 40px}.metric-grid{grid-template-columns:repeat(2,1fr)}.scenario-grid,.combined-grid,.plogic-grid{grid-template-columns:1fr}.fr2,.fr3{grid-template-columns:1fr}}
+
+/* ── FOOTER ── */
+.footer{background:var(--midnight);color:rgba(255,255,255,.35);text-align:center;padding:14px;font-size:10px}
+.footer span{color:var(--yellow)}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div>
+    <h1>Sponsorship Target Calculator</h1>
+    <p>Multi-metric target setting using historical performance, statistical baseline, and scenario-based payout projection.</p>
+  </div>
+  <div class="hero-right">
+    <span class="hero-badge">PRM Internal Tool v2</span>
+    <a class="hero-conf" href="https://confluence.exness.io/spaces/COMMERCIAL/pages/265966344/Partner+Sponsorship+Requests" target="_blank" rel="noopener noreferrer">&#128203; Partner Sponsorship Guidelines</a>
+  </div>
+</header>
+
+<div class="wrap">
+<div class="main-col">
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 1 - PARTNER INFO + METRIC SLOTS
+════════════════════════════════════════════════════════════ -->
+<div class="card">
+  <div class="card-header"><span class="snum">1</span><h2>Metric Target Setup</h2></div>
+  <p class="section-sub">Select up to 3 KPI metrics. Each metric gets its own data, statistics, baseline, and payout.</p>
+
+  <div class="guide-box">
+    <div class="guide-box-title">Metric Selection Guide</div>
+    <div class="guide-item"><span style="font-size:14px;flex-shrink:0">&#128101;</span><p><strong>Active Traders</strong> when objective is retention or maintaining performance. Set target above historical best month to combine retention and acquisition.</p></div>
+    <div class="guide-item"><span style="font-size:14px;flex-shrink:0">&#128176;</span><p><strong>FTD or FTT</strong> when primary objective is new client acquisition.</p></div>
+  </div>
+
+  <div class="fr2" style="margin-bottom:14px">
+    <div class="fg"><label>Partner Name</label><input type="text" id="partnerName" placeholder="e.g. IB Trading Group"/></div>
+    <div class="fg"><label>Partner UID</label><input type="text" id="partnerUID" placeholder="e.g. 123456789"/></div>
+  </div>
+  <div class="fr2" style="margin-bottom:14px">
+    <div class="fg"><label>PRM Name</label><input type="text" id="prmName" placeholder="e.g. ARM Tussananakajit"/></div>
+    <div class="fg"><label>Sponsorship Name</label><input type="text" id="sponsorshipName" placeholder="e.g. TH FTD Booster Q3 2026"/></div>
+  </div>
+  <div class="fg"><label>Notes</label><textarea id="sponsorshipNotes" placeholder="Optional context, partner pipeline notes, etc."></textarea></div>
+
+  <hr class="div"/>
+
+  <!-- METRIC SLOTS -->
+  <div id="metricSlots" style="display:flex;flex-direction:column;gap:12px;margin-bottom:12px"></div>
+  <div class="btn-row">
+    <button class="btn btn-primary btn-sm" id="addMetricBtn" onclick="addMetricSlot()">+ Add Metric</button>
+    <span style="font-size:11px;color:var(--grey)" id="slotCountNote">1 of 3 metrics added</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 2 - DURATION (shared)
+════════════════════════════════════════════════════════════ -->
+<div class="card">
+  <div class="card-header"><span class="snum">2</span><h2>Sponsorship Duration</h2></div>
+  <p class="section-sub">Duration is shared across all metrics. Uplift % is set per metric in each metric card.</p>
+  <div class="fr2">
+    <div>
+      <label style="margin-bottom:7px;display:block">Duration (months)</label>
+      <div class="chip-group" id="durChips">
+        <button class="chip" data-dur="1" onclick="selDur(this)">1</button>
+        <button class="chip active" data-dur="3" onclick="selDur(this)">3</button>
+        <button class="chip" data-dur="6" onclick="selDur(this)">6</button>
+        <button class="chip" data-dur="12" onclick="selDur(this)">12</button>
+        <button class="chip" data-dur="custom" onclick="selDur(this)">Custom</button>
+      </div>
+      <div id="durCustomWrap" style="display:none;margin-top:8px"><input type="number" id="durCustomVal" placeholder="e.g. 4" style="max-width:120px" oninput="recalcAll()"/></div>
+    </div>
+    <div>
+      <label style="margin-bottom:7px;display:block">Rounding</label>
+      <div class="chip-group" id="roundChips">
+        <button class="chip active" data-round="none" onclick="selRound(this)">None</button>
+        <button class="chip" data-round="ceil" onclick="selRound(this)">Round Up</button>
+        <button class="chip" data-round="floor" onclick="selRound(this)">Round Down</button>
+        <button class="chip" data-round="int" onclick="selRound(this)">Nearest Int</button>
+        <button class="chip" data-round="5" onclick="selRound(this)">Nearest 5</button>
+        <button class="chip" data-round="10" onclick="selRound(this)">Nearest 10</button>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:12px;padding:12px;background:var(--off-white);border-radius:9px;font-size:12px;color:var(--steel)">
+    Duration: <strong id="displayDur" style="color:var(--midnight)">3 months</strong>
+  </div>
+</div>
+
+<!-- Section 6 removed - scenario inputs moved into each metric card -->
+<!-- Hidden fallback inputs -->
+<div style="display:none">
+  <input type="number" id="worstPct" value="50"/>
+  <input type="number" id="basePct"  value="100"/>
+  <input type="number" id="bestPct"  value="200"/>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 3 - PAYOUT STRUCTURE
+════════════════════════════════════════════════════════════ -->
+<div class="card">
+  <div class="card-header"><span class="snum">3</span><h2>Payout Structure</h2></div>
+  <p class="section-sub">Each metric has its own payout config (in its metric card). Select how payouts combine below.</p>
+
+  <!-- UPFRONT (shared) -->
+  <div style="margin-bottom:14px">
+    <div class="tog-wrap">
+      <label class="tog"><input type="checkbox" id="upfrontToggle" onchange="toggleUpfront();recalcAll()"/><span class="tog-sl"></span></label>
+      <span class="tog-label"><strong>Upfront payment?</strong> (shared, paid monthly regardless of performance)</span>
+    </div>
+    <div id="upfrontWrap" style="display:none;margin-top:8px">
+      <div class="fr2" style="max-width:460px">
+        <div class="fg"><label>Upfront per Month (USD)</label><input type="number" id="upfrontMonthly" placeholder="e.g. 300" oninput="recalcAll()"/></div>
+        <div class="fg"><label>Total Upfront (all months)</label><div style="padding:8px 11px;background:var(--off-white);border-radius:7px;font-size:12px;font-weight:700;color:var(--midnight)" id="upfrontTotal">--</div></div>
+      </div>
+      <div class="alert alert-warn"><span class="alert-icon">&#9888;</span><span>Upfront is paid regardless of metric achievement. Include in total sponsorship cost.</span></div>
+    </div>
+  </div>
+
+  <hr class="div"/>
+  <label style="margin-bottom:10px;display:block;font-size:12px;font-weight:700;color:var(--midnight)">Payout Logic - How do multiple metric payouts combine?</label>
+  <div class="plogic-grid">
+    <button class="plogic-btn active" data-logic="independent" onclick="selPayoutLogic(this)">
+      <div class="plogic-icon">&#10133;</div>
+      <div class="plogic-name">Independent</div>
+      <div class="plogic-desc">Each metric pays separately. Total = sum of all metric payouts.</div>
+    </button>
+    <button class="plogic-btn" data-logic="all_or_nothing" onclick="selPayoutLogic(this)">
+      <div class="plogic-icon">&#128275;</div>
+      <div class="plogic-name">All-or-Nothing</div>
+      <div class="plogic-desc">All metrics must hit 100%. If any miss, performance payout = $0.</div>
+    </button>
+    <button class="plogic-btn" data-logic="discretion" onclick="selPayoutLogic(this)">
+      <div class="plogic-icon">&#9878;</div>
+      <div class="plogic-name">Manager Discretion</div>
+      <div class="plogic-desc">Suggested payout shown per achievement %. Flagged for CD/RD approval.</div>
+    </button>
+  </div>
+
+  <div id="payoutLogicAlert" style="display:none"></div>
+
+  <hr class="div"/>
+  <div style="font-size:12px;font-weight:700;color:var(--midnight);margin-bottom:10px">Combined Payout Projection</div>
+  <div class="combined-grid">
+    <div class="combined-cell combined-worst">
+      <div class="combined-label">Worst Case Total</div>
+      <div class="combined-total" id="comb-worst">--</div>
+      <div class="combined-detail" id="comb-worst-detail"></div>
+    </div>
+    <div class="combined-cell combined-base">
+      <div class="combined-label">Base Case Total</div>
+      <div class="combined-total" id="comb-base">--</div>
+      <div class="combined-detail" id="comb-base-detail"></div>
+    </div>
+    <div class="combined-cell combined-best">
+      <div class="combined-label">Best Case Total</div>
+      <div class="combined-total" id="comb-best">--</div>
+      <div class="combined-detail" id="comb-best-detail"></div>
+    </div>
+  </div>
+  <div id="allOrNothingWarn" style="display:none;margin-top:10px"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 4 - ROI
+════════════════════════════════════════════════════════════ -->
+<div class="card">
+  <div class="card-header"><span class="snum">4</span><h2>ROI and Business Justification</h2></div>
+  <p class="section-sub">Optional. Estimate revenue vs sponsorship cost to validate commercial viability.</p>
+  <div class="fr2">
+    <div class="fg">
+      <label>Estimated Revenue ($)</label>
+      <input type="number" id="estRevInput" placeholder="e.g. 12000" oninput="recalcROI();updateSumRevenue()"/>
+      <p style="font-size:10px;color:var(--grey);margin-top:4px">Based on <strong>incremental SR only</strong>, excluding baseline SR from existing business.</p>
+    </div>
+    <div class="fg">
+      <label>Revenue Calculation Logic</label>
+      <textarea id="revLogic" rows="2" placeholder="e.g. 200 FTTs × avg $60 NSR = $12,000" oninput="updateSumRevenue()"></textarea>
+      <p style="font-size:10px;color:#2d5a3d;background:var(--pale-green);border-radius:6px;padding:6px 8px;margin-top:4px">Revenue should be calculated based on incremental SR only, excluding baseline SR generated from the partner's existing business prior to the sponsorship.</p>
+    </div>
+  </div>
+  <div class="fg" style="max-width:380px">
+    <label>Total Sponsorship Cost ($)</label>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="number" id="sponsorCost" placeholder="e.g. 5000" oninput="this.dataset.manualOverride='1';recalcROI()" style="flex:1"/>
+      <button class="btn btn-secondary btn-sm" onclick="useMaxBudget()" style="white-space:nowrap;flex-shrink:0">&#8593; Use Max Budget</button>
+    </div>
+    <p style="font-size:10px;color:var(--steel);margin-top:4px">Tip: Use <strong>Best Case Total</strong> from Section 3 as cost ceiling. <span id="maxBudgetHint" style="color:var(--dark-yellow);font-weight:700"></span></p>
+  </div>
+  <hr class="div"/>
+  <div class="stat-grid">
+    <div class="stat-box"><div class="stat-label">Estimated Revenue</div><div class="stat-value" id="roi-rev">--</div></div>
+    <div class="stat-box"><div class="stat-label">Sponsorship Cost</div><div class="stat-value" id="roi-cost">--</div></div>
+    <div class="stat-box"><div class="stat-label">Net Impact</div><div class="stat-value" id="roi-net">--</div></div>
+    <div class="stat-box hi"><div class="stat-label">ROI %</div><div class="stat-value" id="roi-pct">--</div></div>
+  </div>
+  <div class="roi-bar-wrap"><div class="roi-bar-fill" id="roiBar" style="width:0%"></div></div>
+  <div id="roiVerdict" style="display:none;margin-top:8px"></div>
+</div>
+
+</div><!-- end main-col -->
+
+<!-- ═══════════════════════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════════════════════════ -->
+<div class="side-col">
+
+  <!-- LIVE SUMMARY -->
+  <div class="card card-midnight">
+    <div class="card-header"><span class="snum" style="background:var(--yellow)">5</span><h2>Live Summary</h2></div>
+
+    <div class="sum-block">
+      <div class="sum-blk-label">Metrics</div>
+      <div id="sum-metrics-list" style="font-size:13px;color:var(--yellow);font-weight:700">Not selected</div>
+    </div>
+    <div class="sum-block">
+      <div class="sum-blk-label">Payout Logic</div>
+      <div id="sum-logic" style="font-size:12px;color:var(--white);font-weight:600">Independent</div>
+    </div>
+    <div class="sum-block">
+      <div class="sum-blk-label">Duration</div>
+      <div id="sum-dur" style="font-size:12px;color:var(--white);font-weight:600">3 months</div>
+    </div>
+
+    <div id="sum-metric-rows" style="margin-bottom:8px"></div>
+
+    <div class="sum-block" style="background:rgba(255,255,255,.05)">
+      <div class="sum-blk-label">Combined Payout (W / B / Be)</div>
+      <div style="font-size:12px;color:var(--white);font-weight:700;margin-top:3px" id="sum-combined-payout">-- / -- / --</div>
+    </div>
+
+    <div class="sum-block" style="background:rgba(255,222,2,.08);border:1px solid rgba(255,222,2,.2)">
+      <div class="sum-blk-label">Estimated Revenue (Sec.8)</div>
+      <div class="sum-blk-val" id="sum-revenue">--</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px" id="sum-rev-logic"></div>
+    </div>
+    <div class="sum-block">
+      <div class="sum-blk-label">Total Sponsorship Cost (Sec.8)</div>
+      <div style="font-size:16px;font-weight:700;color:var(--white)" id="sum-cost">--</div>
+    </div>
+  </div>
+
+  <!-- EXPORT -->
+  <div class="card card-yellow">
+    <div class="card-header"><span class="snum">6</span><h2>Export Summary</h2></div>
+    <p style="font-size:11px;color:var(--steel);margin-bottom:12px">Generate the Exness sponsorship request format for JIRA submission.</p>
+    <button class="btn btn-dark" style="width:100%;margin-bottom:8px;justify-content:center" onclick="generateSummary()">Generate Full Summary</button>
+    <a href="https://jira.exness.io/servicedesk/customer/portal/36/create/1088" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="width:100%;margin-bottom:4px;justify-content:center;display:flex">&#128196; Partner Sponsorship Request</a>
+    <div id="summaryBox" style="display:none;margin-top:10px">
+      <div class="summary-output" id="summaryText"></div>
+      <div class="btn-row" style="margin-top:10px">
+        <button class="btn btn-primary btn-sm" onclick="copySummary()">Copy Summary</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportJSON()" style="background:#e8eaf6;border-color:#9fa8da;color:#283593">&#128229; Export JSON</button>
+      </div>
+    </div>
+    <div style="margin-top:14px;background:rgba(7,14,32,.06);border-left:3px solid var(--dark-yellow);border-radius:0 8px 8px 0;padding:10px 12px">
+      <p style="font-size:11px;color:var(--mainly-blue);line-height:1.6"><strong>Required:</strong> PRMs are required to download the JSON file and attach it to the Partner Sponsorship Request (JIRA) when creating the task.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 7: BD OPS VALIDATION -->
+  <div class="card" style="border:2px solid #b2d4be">
+    <div class="card-header"><span class="snum">7</span><h2>BD Ops Validation</h2></div>
+    <p style="font-size:11px;color:var(--steel);margin-bottom:12px">Import the JSON file attached by the PRM to the JIRA task to validate data independently.</p>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;background:var(--pale-green);color:#2d5a3d;border:1.5px solid #b2d4be" onclick="document.getElementById('bdOpsImportInput').click()">&#128228; Import JSON (BD Ops validation)</button>
+    <input type="file" id="bdOpsImportInput" accept=".json" style="display:none" onchange="importJSON(event)"/>
+    <div id="bdOpsLoadStatus" style="display:none;margin-top:10px" class="alert alert-info">
+      <span class="alert-icon">&#10003;</span>
+      <span id="bdOpsLoadMsg">State loaded. All fields are now pre-filled with the PRM's submitted data.</span>
+    </div>
+    <div style="margin-top:10px;font-size:10px;color:var(--grey);line-height:1.6">
+      After import, all metric data, targets, baselines, and payouts reflect exactly what the PRM submitted. You can re-run calculations and verify independently.
+    </div>
+  </div>
+
+  <!-- QUICK GUIDE -->
+  <div class="card">
+    <div class="card-header"><span class="snum" style="background:var(--steel);color:var(--white)">?</span><h2>Quick Guide</h2></div>
+    <div style="font-size:11px;color:var(--steel);line-height:1.9">
+      <p><strong style="color:var(--midnight)">1.</strong> Fill partner details and add metrics (up to 3).</p>
+      <p><strong style="color:var(--midnight)">2.</strong> Each metric card has its own data table, stats, baseline, uplift, and payout.</p>
+      <p><strong style="color:var(--midnight)">3.</strong> Set shared Duration and Scenario % in Sections 5-6.</p>
+      <p><strong style="color:var(--midnight)">4.</strong> Choose Payout Logic in Section 3.</p>
+      <p><strong style="color:var(--midnight)">5.</strong> Fill ROI in Section 4, then Generate Summary.</p>
+      <hr class="div" style="margin:8px 0"/>
+      <p style="color:var(--grey)">All data is processed locally in your browser. Nothing is transmitted.</p>
+    </div>
+  </div>
+
+</div><!-- end side-col -->
+</div><!-- end wrap -->
+
+<footer class="footer"><span>Exness</span> Sponsorship Target Calculator v2 | PRM Internal Tool | All data processed locally in your browser.</footer>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════════════════════════════════
+const METRIC_DEFS = {
+  'FTD':'Number of First Time Deposits executed by partner clients within the month.',
+  'Active Traders':'Clients who opened and closed at least 1 trade in the month. Retention metric.',
+  'FTT':'Number of clients with First Time Trades placed within the month.',
+  'UFTT':'Unique First Time Trade. Number of unique clients placing their first trade within the month.',
+  'LMAU':'Loyal Monthly Active Users under a partner.',
+  'LMAU High Value':'Loyal Monthly Active Users High Value under a partner.',
+  'Trading Volume - Lots':'Closed traded lots by clients under the partner.',
+  'Trading Volume - USD':'Trading volume generated in USD by clients under the partner.',
+  'Sub-partners':'Number of new sub-partners registered under the partner within the month.'
+};
+const METRICS = Object.keys(METRIC_DEFS);
+
+// ══════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════════
+let slots = [];   // array of slot state objects
+let payoutLogic = 'independent';
+let roundMode = 'none';
+let state = { maxBudgetBest: 0 };
+
+// ══════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════
+window.onload = () => { addMetricSlot(); };
+
+// ══════════════════════════════════════════════════════════════════
+// SLOT MANAGEMENT
+// ══════════════════════════════════════════════════════════════════
+function addMetricSlot() {
+  if (slots.length >= 3) return;
+  const id = 'slot_' + Date.now();
+  const idx = slots.length;
+  const colors = ['#ffde02','#47667b','#e1ebe5'];
+  const labels = ['Metric 1','Metric 2','Metric 3'];
+
+  const slot = {
+    id, idx,
+    metric: null,
+    rows: [],
+    stats: {},
+    baselineType: null,
+    baselineCustomValue: '',
+    uplift: 10,
+    payoutType: 'per_unit',
+    rewardPerUnit: 0,
+    fixedBudget: 0,
+    prorated: false,
+    tiers: [],
+    milestones: [],
+    reportLink: '',
+    // computed
+    sponsTarget: 0, monthlyTarget: 0,
+    scenarios: {worst:0,base:0,best:0},
+    payouts: {worst:0,base:0,best:0}
+  };
+  slots.push(slot);
+
+  const el = document.createElement('div');
+  el.className = 'metric-slot';
+  el.id = 'slot_el_' + id;
+  el.innerHTML = buildSlotHTML(slot, labels[idx], colors[idx]);
+  document.getElementById('metricSlots').appendChild(el);
+
+  // init table rows
+  for (let i = 0; i < 12; i++) addSlotRow(id, `Month ${i+1}`);
+  // Set default To month selector to December
+  setTimeout(() => { const toEl = document.getElementById('slotToMo_'+id); if(toEl) toEl.value = 12; }, 0);
+
+  // init default tiers & milestones
+  addSlotTier(id,'0','2','0');
+  addSlotTier(id,'3','10','30');
+  addSlotTier(id,'11','50','50');
+  addSlotMilestone(id,'100','100');
+  addSlotMilestone(id,'120','150');
+  addSlotMilestone(id,'150','200');
+  addSlotMilestone(id,'180','250');
+  addSlotMilestone(id,'200','300');
+
+  switchSlotPayout(id, 'per_unit');
+  updateSlotCount();
+  openSlot(id);
+  recalcAll();
+}
+
+function removeSlot(id) {
+  slots = slots.filter(s => s.id !== id);
+  const el = document.getElementById('slot_el_' + id);
+  if (el) el.remove();
+  slots.forEach((s, i) => s.idx = i);
+  updateSlotCount();
+  recalcAll();
+}
+
+function updateSlotCount() {
+  const n = slots.length;
+  document.getElementById('slotCountNote').textContent = n + ' of 3 metric' + (n!==1?'s':'') + ' added';
+  document.getElementById('addMetricBtn').style.display = n >= 3 ? 'none' : 'inline-flex';
+}
+
+function openSlot(id) {
+  const body = document.getElementById('sbody_' + id);
+  const chev = document.getElementById('schev_' + id);
+  const wrap = document.getElementById('slot_el_' + id);
+  if (!body) return;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  if (chev) chev.classList.toggle('open', !isOpen);
+  if (wrap) wrap.classList.toggle('active', !isOpen);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// BUILD SLOT HTML
+// ══════════════════════════════════════════════════════════════════
+function buildSlotHTML(slot, label, color) {
+  const id = slot.id;
+  const metricBtns = METRICS.map(m =>
+    `<button class="metric-btn" data-metric="${m}" onclick="selectSlotMetric('${id}',this)">${m}</button>`
+  ).join('');
+
+  return `
+  <div class="metric-slot-header" onclick="openSlot('${id}')">
+    <span class="slot-badge" style="background:${color}">${label}</span>
+    <span class="slot-title" id="stitle_${id}">Select a metric</span>
+    <button class="slot-remove" onclick="event.stopPropagation();removeSlot('${id}')" title="Remove metric">×</button>
+    <span class="slot-chevron open" id="schev_${id}">&#9660;</span>
+  </div>
+  <div class="metric-slot-body open" id="sbody_${id}">
+
+    <!-- METRIC SELECT -->
+    <div style="margin-bottom:12px">
+      <div class="metric-grid">${metricBtns}</div>
+      <div class="metric-def" id="mdef_${id}"></div>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <label>Validation Report Link (MetaBase / Tableau)</label>
+      <input type="text" id="reportLink_${id}" placeholder="https://metabase.exness.io/..." style="margin-bottom:10px" oninput="recalcAll()"/>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px">
+        <span style="font-size:11px;font-weight:600;color:var(--steel);white-space:nowrap">Data year:</span>
+        <input type="number" id="slotYear_${id}" placeholder="e.g. 2025" style="width:90px" oninput="applySlotDateRange('${id}')"/>
+        <span style="font-size:11px;font-weight:600;color:var(--steel);white-space:nowrap">From:</span>
+        <select id="slotFromMo_${id}" style="width:80px" onchange="applySlotDateRange('${id}')"><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option><option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select>
+        <span style="font-size:11px;font-weight:600;color:var(--steel)">to:</span>
+        <select id="slotToMo_${id}" style="width:80px" onchange="applySlotDateRange('${id}')"><option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option><option value="4">Apr</option><option value="5">May</option><option value="6">Jun</option><option value="7">Jul</option><option value="8">Aug</option><option value="9">Sep</option><option value="10">Oct</option><option value="11">Nov</option><option value="12">Dec</option></select>
+        <button class="btn btn-secondary btn-sm" onclick="applySlotDateRange('${id}')">Apply</button>
+      </div>
+      <p style="font-size:10px;color:var(--grey);margin-top:5px">When year and month range are set, the Month column auto-fills (e.g. Jun/2025, Jan/2026). If the range crosses year-end (e.g. Jun 2025 to May 2026), the year increments automatically. Rows outside the range are hidden.</p>
+    </div>
+
+    <!-- DATA INPUT TABS -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchSlotTab('${id}','manual',this)">Manual Input</button>
+      <button class="tab-btn" onclick="switchSlotTab('${id}','paste',this)">Paste / CSV</button>
+      <button class="tab-btn" onclick="switchSlotTab('${id}','screenshot',this)">Screenshot</button>
+    </div>
+    <div id="stab_manual_${id}">
+      <table class="perf-table">
+        <thead><tr><th style="width:32px">#</th><th>Month</th><th id="scol_${id}">Value</th><th>Notes</th><th style="width:30px"></th></tr></thead>
+        <tbody id="stbody_${id}"></tbody>
+      </table>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn btn-secondary btn-sm" onclick="addSlotRow('${id}')">+ Row</button>
+        <button class="btn btn-primary btn-sm" onclick="recalcAll()">Recalculate</button>
+        <button class="btn btn-sm" style="background:#fde8e8;color:#c0392b;border:1.5px solid #f5c6c6" onclick="deleteSlotRows('${id}')">&#128465; Clear</button>
+      </div>
+    </div>
+    <div id="stab_paste_${id}" style="display:none">
+      <div class="fg"><label>Paste values (comma, tab, or line-separated)</label><textarea id="spaste_${id}" rows="5" placeholder="45, 52, 61 or one per line"></textarea></div>
+      <button class="btn btn-primary btn-sm" onclick="parsePaste('${id}')">Parse and Fill</button>
+    </div>
+    <div id="stab_screenshot_${id}" style="display:none">
+      <div class="upload-area" onclick="document.getElementById('sfile_${id}').click()">
+        <div style="font-size:28px;margin-bottom:6px">&#128202;</div>
+        <p><strong>Click to upload MetaBase screenshot</strong></p>
+        <p>PNG, JPG accepted. Preview shown below.</p>
+      </div>
+      <input type="file" id="sfile_${id}" accept="image/*" style="display:none" onchange="previewSS('${id}',event)"/>
+      <img id="ssimg_${id}" style="max-width:100%;border-radius:8px;margin-top:10px;display:none" alt="Screenshot"/>
+      <div class="alert alert-info" style="margin-top:10px"><span class="alert-icon">&#9432;</span><span>Upload for reference, then enter values manually in the table.</span></div>
+    </div>
+
+    <!-- STATS -->
+    <hr class="div"/>
+    <div style="font-size:11px;font-weight:700;color:var(--midnight);margin-bottom:8px">Statistics</div>
+    <div id="sstatAlerts_${id}"></div>
+    <div class="stat-grid" style="grid-template-columns:repeat(4,1fr)">
+      <div class="stat-box hi"><div class="stat-label">Mean</div><div class="stat-value" id="ss_mean_${id}">--</div></div>
+      <div class="stat-box hi"><div class="stat-label">Median</div><div class="stat-value" id="ss_median_${id}">--</div></div>
+      <div class="stat-box"><div class="stat-label">Std Dev</div><div class="stat-value" id="ss_std_${id}">--</div></div>
+      <div class="stat-box"><div class="stat-label">CV %</div><div class="stat-value" id="ss_cv_${id}">--</div></div>
+      <div class="stat-box"><div class="stat-label">Min</div><div class="stat-value" id="ss_min_${id}">--</div></div>
+      <div class="stat-box"><div class="stat-label">Max</div><div class="stat-value" id="ss_max_${id}">--</div></div>
+      <div class="stat-box"><div class="stat-label">Latest</div><div class="stat-value" id="ss_latest_${id}">--</div></div>
+      <div class="stat-box"><div class="stat-label">Count</div><div class="stat-value" id="ss_count_${id}">--</div></div>
+    </div>
+
+    <!-- DISTRIBUTION CHART -->
+    <div id="distContainer_${id}" style="background:var(--off-white);border-radius:10px;padding:14px;margin-top:12px;position:relative">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+        <div><div style="font-size:11px;font-weight:700;color:var(--midnight)">Distribution Chart</div><div style="font-size:10px;color:var(--grey)">Yellow = suggested baseline. Grey = not suggested.</div></div>
+        <div style="display:flex;gap:10px;font-size:10px">
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#ffde02;border-radius:2px;display:inline-block"></span>Suggested</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#6d6e73;border-radius:2px;display:inline-block"></span>Not suggested</span>
+        </div>
+      </div>
+      <canvas id="distCanvas_${id}" style="width:100%;height:180px;display:block"></canvas>
+      <div id="distEmpty_${id}" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--grey);font-size:11px">Enter data to see distribution.</div>
+      <div id="distInsight_${id}" style="margin-top:8px;font-size:11px;color:var(--steel);display:none"></div>
+    </div>
+
+    <!-- BASELINE + UPLIFT -->
+    <hr class="div"/>
+    <div class="fr2" style="align-items:start">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--midnight);margin-bottom:8px">Baseline</div>
+        <div id="sbaseRec_${id}" class="alert alert-info" style="display:none;margin-bottom:8px"><span class="alert-icon">&#128161;</span><span id="sbaseRecTxt_${id}"></span></div>
+        <div class="chip-group" id="sbaseChips_${id}">
+          <button class="chip" data-base="mean" onclick="selBase('${id}',this)">Mean</button>
+          <button class="chip" data-base="median" onclick="selBase('${id}',this)">Median</button>
+          <button class="chip" data-base="latest" onclick="selBase('${id}',this)">Latest</button>
+          <button class="chip" data-base="best" onclick="selBase('${id}',this)">Best Month</button>
+          <button class="chip" data-base="worst" onclick="selBase('${id}',this)">Worst Month</button>
+          <button class="chip" data-base="custom" onclick="selBase('${id}',this)">Custom</button>
+        </div>
+        <div id="sbaseCustomWrap_${id}" style="display:none;margin-top:8px"><input type="number" id="sbaseCustomVal_${id}" placeholder="Custom value" style="max-width:160px" oninput="recalcAll()"/></div>
+        <div style="margin-top:10px;background:var(--off-white);border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;color:var(--grey);font-weight:600;text-transform:uppercase;letter-spacing:.4px">Selected Baseline</div>
+          <div style="font-size:18px;font-weight:700;color:var(--midnight)" id="sbaseVal_${id}">--</div>
+          <div style="font-size:10px;color:var(--grey)" id="sbaseTypeLbl_${id}">Not selected</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--midnight);margin-bottom:8px">Growth Uplift %</div>
+        <div class="chip-group" id="supliftChips_${id}">
+          <button class="chip" data-up="0" onclick="selUplift('${id}',this)">0%</button>
+          <button class="chip active" data-up="10" onclick="selUplift('${id}',this)">+10%</button>
+          <button class="chip" data-up="20" onclick="selUplift('${id}',this)">+20%</button>
+          <button class="chip" data-up="30" onclick="selUplift('${id}',this)">+30%</button>
+          <button class="chip" data-up="50" onclick="selUplift('${id}',this)">+50%</button>
+          <button class="chip" data-up="custom" onclick="selUplift('${id}',this)">Custom</button>
+        </div>
+        <div id="supliftCustomWrap_${id}" style="display:none;margin-top:8px"><input type="number" id="supliftCustomVal_${id}" placeholder="e.g. 25" style="max-width:120px" oninput="recalcAll()"/></div>
+        <div style="margin-top:10px;background:var(--light-yellow);border-radius:8px;padding:10px 12px">
+          <div style="font-size:10px;color:var(--grey);font-weight:600;text-transform:uppercase;letter-spacing:.4px">Sponsorship Target</div>
+          <div style="font-size:18px;font-weight:700;color:var(--midnight)" id="starg_${id}">--</div>
+          <div style="font-size:10px;color:var(--grey)">Monthly: <strong id="smonthlytarg_${id}">--</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENARIOS (per metric) -->
+    <hr class="div"/>
+    <div style="font-size:11px;font-weight:700;color:var(--midnight);margin-bottom:8px">Scenario Planning</div>
+    <div class="fr3" style="margin-bottom:12px">
+      <div class="fg"><label>Worst Case %</label><input type="number" id="sWorstPct_${id}" value="50" min="0" oninput="recalcAll()"/></div>
+      <div class="fg"><label>Base Case %</label><input type="number" id="sBasePct_${id}" value="100" min="0" oninput="recalcAll()"/></div>
+      <div class="fg"><label>Best Case %</label><input type="number" id="sBestPct_${id}" value="200" min="0" oninput="recalcAll()"/></div>
+    </div>
+    <div class="scenario-grid">
+      <div class="sc-card sc-worst"><div class="sc-label">Worst</div><div class="sc-pct" id="ssc_worst_${id}">--</div><div class="sc-detail" id="ssc_worst_d_${id}"></div></div>
+      <div class="sc-card sc-base"><div class="sc-label">Base</div><div class="sc-pct" id="ssc_base_${id}">--</div><div class="sc-detail" id="ssc_base_d_${id}"></div></div>
+      <div class="sc-card sc-best"><div class="sc-label">Best</div><div class="sc-pct" id="ssc_best_${id}">--</div><div class="sc-detail" id="ssc_best_d_${id}"></div></div>
+    </div>
+
+    <!-- PAYOUT (per metric) -->
+    <hr class="div"/>
+    <div style="font-size:11px;font-weight:700;color:var(--midnight);margin-bottom:10px">Payout Config for this metric</div>
+    <div class="fg" style="max-width:320px;margin-bottom:12px">
+      <label>Payout Type</label>
+      <select id="spayoutType_${id}" onchange="switchSlotPayout('${id}',this.value)">
+        <option value="per_unit">Fixed Payout per Achieved Unit</option>
+        <option value="fixed_budget">Fixed Sponsorship Budget</option>
+        <option value="tiered">Tiered Payout (cumulative per unit)</option>
+        <option value="milestone">Milestone Reward (highest threshold reached)</option>
+      </select>
+    </div>
+    <div id="spayout_per_unit_${id}">
+      <div class="fg" style="max-width:260px"><label>Reward per Unit (USD)</label><input type="number" id="srewardPerUnit_${id}" placeholder="e.g. 20" oninput="recalcAll()"/></div>
+    </div>
+    <div id="spayout_fixed_budget_${id}" style="display:none">
+      <div class="fr2" style="max-width:460px">
+        <div class="fg"><label>Fixed Budget (USD)</label><input type="number" id="sfixedBudget_${id}" placeholder="e.g. 500" oninput="recalcAll()"/></div>
+        <div class="fg"><div style="height:22px"></div><div class="tog-wrap"><label class="tog"><input type="checkbox" id="sprorated_${id}" onchange="recalcAll()"/><span class="tog-sl"></span></label><span class="tog-label">Prorated payout</span></div></div>
+      </div>
+    </div>
+    <div id="spayout_tiered_${id}" style="display:none">
+      <table class="tier-table" id="stierTable_${id}">
+        <thead><tr><th>From</th><th>To</th><th>Reward/unit ($)</th><th style="width:30px"></th></tr></thead>
+        <tbody id="stierBody_${id}"></tbody>
+      </table>
+      <button class="btn btn-secondary btn-sm" style="margin-top:6px" onclick="addSlotTier('${id}')">+ Add Tier</button>
+    </div>
+    <div id="spayout_milestone_${id}" style="display:none">
+      <div class="alert alert-info" style="margin-bottom:10px"><span class="alert-icon">&#127942;</span><span>Partner earns reward for the <strong>highest threshold reached</strong>. One reward paid per month, not cumulative.</span></div>
+      <table class="tier-table" id="smilestoneTable_${id}">
+        <thead><tr><th>Threshold (&gt;=)</th><th>Flat Reward ($)</th><th style="width:30px"></th></tr></thead>
+        <tbody id="smilestoneBody_${id}"></tbody>
+      </table>
+      <button class="btn btn-secondary btn-sm" style="margin-top:6px" onclick="addSlotMilestone('${id}')">+ Add Threshold</button>
+      <div style="margin-top:8px;font-size:11px;color:var(--grey)">Max possible reward: <strong id="smilestoneMax_${id}">--</strong></div>
+    </div>
+
+    <!-- PAYOUT RESULTS (per metric) -->
+    <div class="scenario-grid" style="margin-top:14px">
+      <div class="sc-card sc-worst"><div class="sc-label">Worst Payout</div><div class="sc-pct" id="spw_worst_${id}">--</div><div class="sc-detail" id="spw_worst_d_${id}"></div></div>
+      <div class="sc-card sc-base"><div class="sc-label">Base Payout</div><div class="sc-pct" id="spw_base_${id}">--</div><div class="sc-detail" id="spw_base_d_${id}"></div></div>
+      <div class="sc-card sc-best"><div class="sc-label">Best Payout</div><div class="sc-pct" id="spw_best_${id}">--</div><div class="sc-detail" id="spw_best_d_${id}"></div></div>
+    </div>
+
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SLOT UI HELPERS
+// ══════════════════════════════════════════════════════════════════
+function switchSlotTab(id, tab, btn) {
+  ['manual','paste','screenshot'].forEach(t => {
+    const el = document.getElementById('stab_' + t + '_' + id);
+    if (el) el.style.display = t === tab ? 'block' : 'none';
+  });
+  const bar = btn.closest('.tab-bar');
+  if (bar) bar.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+}
+
+function selectSlotMetric(id, btn) {
+  const slotEl = document.getElementById('slot_el_' + id);
+  slotEl.querySelectorAll('.metric-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const m = btn.dataset.metric;
+  const slot = slots.find(s => s.id === id);
+  if (slot) slot.metric = m;
+  document.getElementById('stitle_' + id).textContent = m;
+  document.getElementById('scol_' + id).textContent = m;
+  const def = document.getElementById('mdef_' + id);
+  def.textContent = METRIC_DEFS[m] || '';
+  def.classList.add('show');
+  recalcAll();
+}
+
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function applySlotDateRange(id) {
+  const yearEl = document.getElementById('slotYear_' + id);
+  const fromEl = document.getElementById('slotFromMo_' + id);
+  const toEl   = document.getElementById('slotToMo_' + id);
+  if (!yearEl || !fromEl || !toEl) return;
+  const startYear = parseInt(yearEl.value);
+  const from = parseInt(fromEl.value);  // 1-12
+  const to   = parseInt(toEl.value);    // 1-12
+  if (!startYear || isNaN(from) || isNaN(to)) return;
+
+  // Build ordered list of {month, year} pairs
+  // If to >= from: same year range (e.g. Jun-Dec 2025)
+  // If to < from: crosses year boundary (e.g. Jun 2025 - May 2026)
+  const monthList = [];
+  let m = from;
+  let y = startYear;
+  while (true) {
+    monthList.push({ m, y });
+    if (m === to && (to >= from ? y === startYear : y === startYear + 1)) break;
+    m++;
+    if (m > 12) { m = 1; y++; }
+    // Safety cap at 24 months
+    if (monthList.length >= 24) break;
+  }
+
+  const numMonths = monthList.length;
+  const tbody = document.getElementById('stbody_' + id);
+  if (!tbody) return;
+  const rows = Array.from(tbody.querySelectorAll('tr'));
+
+  rows.forEach((tr, i) => {
+    if (i < numMonths) {
+      const label = `${MONTH_NAMES[monthList[i].m - 1]}/${monthList[i].y}`;
+      const labelInput = tr.querySelectorAll('input')[0];
+      if (labelInput) labelInput.value = label;
+      tr.style.display = '';
+    } else {
+      tr.style.display = 'none';
+    }
+  });
+  // Add rows if needed
+  for (let i = rows.length; i < numMonths; i++) {
+    const label = `${MONTH_NAMES[monthList[i].m - 1]}/${monthList[i].y}`;
+    addSlotRow(id, label);
+  }
+  recalcAll();
+}
+
+function addSlotRow(id, label) {
+  const tbody = document.getElementById('stbody_' + id);
+  if (!tbody) return;
+  const n = tbody.rows.length + 1;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td style="color:var(--grey);font-size:10px;text-align:center">${n}</td>
+    <td><input type="text" value="${label || 'Month ' + n}"/></td>
+    <td><input type="number" class="slot-val" placeholder="0" oninput="recalcAll()"/></td>
+    <td><input type="text" placeholder="note"/></td>
+    <td><button class="btn-icon" onclick="this.closest('tr').remove();recalcAll()">×</button></td>`;
+  tbody.appendChild(tr);
+}
+
+function deleteSlotRows(id) {
+  if (!confirm('Clear all rows?')) return;
+  const tbody = document.getElementById('stbody_' + id);
+  if (tbody) tbody.innerHTML = '';
+  recalcAll();
+}
+
+function parsePaste(id) {
+  const raw = document.getElementById('spaste_' + id).value;
+  const nums = raw.match(/-?\d+(\.\d+)?/g);
+  if (!nums) { alert('No numbers found.'); return; }
+  const tbody = document.getElementById('stbody_' + id);
+  const rows = tbody.querySelectorAll('tr');
+  nums.forEach((n, i) => {
+    if (i < rows.length) {
+      rows[i].querySelector('.slot-val').value = parseFloat(n);
+    } else {
+      addSlotRow(id);
+      tbody.querySelectorAll('tr')[i].querySelector('.slot-val').value = parseFloat(n);
+    }
+  });
+  switchSlotTab(id, 'manual', document.querySelector(`#slot_el_${id} .tab-btn`));
+  recalcAll();
+}
+
+function previewSS(id, e) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => { const img = document.getElementById('ssimg_' + id); img.src = ev.target.result; img.style.display = 'block'; };
+  r.readAsDataURL(f);
+}
+
+function addSlotTier(id, from='', to='', reward='') {
+  const tbody = document.getElementById('stierBody_' + id);
+  if (!tbody) return;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input type="number" class="st-from" value="${from}" oninput="recalcAll()"/></td>
+    <td><input type="number" class="st-to" value="${to}" oninput="recalcAll()"/></td>
+    <td><input type="number" class="st-reward" value="${reward}" oninput="recalcAll()"/></td>
+    <td><button class="btn-icon" onclick="this.closest('tr').remove();recalcAll()">×</button></td>`;
+  tbody.appendChild(tr);
+}
+
+function addSlotMilestone(id, threshold='', reward='') {
+  const tbody = document.getElementById('smilestoneBody_' + id);
+  if (!tbody) return;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input type="number" class="sm-thresh" value="${threshold}" oninput="recalcAll()"/></td>
+    <td><input type="number" class="sm-reward" value="${reward}" oninput="recalcAll()"/></td>
+    <td><button class="btn-icon" onclick="this.closest('tr').remove();recalcAll()">×</button></td>`;
+  tbody.appendChild(tr);
+}
+
+function switchSlotPayout(id, type) {
+  ['per_unit','fixed_budget','tiered','milestone'].forEach(t => {
+    const el = document.getElementById('spayout_' + t + '_' + id);
+    if (el) el.style.display = t === type ? 'block' : 'none';
+  });
+}
+
+function selBase(id, btn) {
+  document.querySelectorAll(`#sbaseChips_${id} .chip`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const slot = slots.find(s => s.id === id);
+  if (slot) {
+    slot.baselineType = btn.dataset.base;
+    if (btn.dataset.base === 'custom') {
+      const customEl = document.getElementById('sbaseCustomVal_' + id);
+      slot.baselineCustomValue = customEl ? customEl.value : (slot.baselineCustomValue || '');
+    }
+  }
+  const cw = document.getElementById('sbaseCustomWrap_' + id);
+  if (cw) cw.style.display = btn.dataset.base === 'custom' ? 'block' : 'none';
+  recalcAll();
+}
+
+function selUplift(id, btn) {
+  document.querySelectorAll(`#supliftChips_${id} .chip`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const cw = document.getElementById('supliftCustomWrap_' + id);
+  if (cw) cw.style.display = btn.dataset.up === 'custom' ? 'block' : 'none';
+  recalcAll();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SHARED CONTROLS
+// ══════════════════════════════════════════════════════════════════
+function selDur(btn) {
+  document.querySelectorAll('#durChips .chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const cw = document.getElementById('durCustomWrap');
+  if (cw) cw.style.display = btn.dataset.dur === 'custom' ? 'block' : 'none';
+  recalcAll();
+}
+
+function selRound(btn) {
+  document.querySelectorAll('#roundChips .chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  roundMode = btn.dataset.round;
+  recalcAll();
+}
+
+function selPayoutLogic(btn) {
+  document.querySelectorAll('.plogic-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  payoutLogic = btn.dataset.logic;
+  recalcAll();
+}
+
+function toggleUpfront() {
+  const show = document.getElementById('upfrontToggle').checked;
+  const w = document.getElementById('upfrontWrap');
+  if (w) w.style.display = show ? 'block' : 'none';
+}
+
+function getDuration() {
+  const a = document.querySelector('#durChips .chip.active');
+  if (!a) return 3;
+  if (a.dataset.dur === 'custom') return parseInt(document.getElementById('durCustomVal').value) || 1;
+  return parseInt(a.dataset.dur);
+}
+
+function getSlotUplift(id) {
+  const a = document.querySelector(`#supliftChips_${id} .chip.active`);
+  if (!a) return 10;
+  if (a.dataset.up === 'custom') return parseFloat(document.getElementById('supliftCustomVal_' + id).value) || 0;
+  return parseFloat(a.dataset.up);
+}
+
+function applyRound(v) {
+  switch(roundMode) {
+    case 'ceil': return Math.ceil(v);
+    case 'floor': return Math.floor(v);
+    case 'int': return Math.round(v);
+    case '5': return Math.round(v/5)*5;
+    case '10': return Math.round(v/10)*10;
+    default: return v;
+  }
+}
+
+function getUpfront() {
+  const on = document.getElementById('upfrontToggle').checked;
+  const mo = parseFloat(document.getElementById('upfrontMonthly').value) || 0;
+  return on ? mo : 0;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// STATISTICS
+// ══════════════════════════════════════════════════════════════════
+function getSlotValues(id) {
+  const tbody = document.getElementById('stbody_' + id);
+  if (!tbody) return [];
+  return Array.from(tbody.querySelectorAll('.slot-val'))
+    .map(i => parseFloat(i.value)).filter(v => !isNaN(v));
+}
+
+function calcStats(arr) {
+  if (!arr.length) return {};
+  const n = arr.length;
+  const sorted = [...arr].sort((a,b)=>a-b);
+  const mean = arr.reduce((s,v)=>s+v,0)/n;
+  const median = n%2 ? sorted[Math.floor(n/2)] : (sorted[n/2-1]+sorted[n/2])/2;
+  const std = n>1 ? Math.sqrt(arr.reduce((s,v)=>s+Math.pow(v-mean,2),0)/(n-1)) : 0;
+  const cv = mean!==0 ? std/Math.abs(mean)*100 : 0;
+  const latest = arr[arr.length-1];
+  let up=0,down=0;
+  for(let i=1;i<n;i++){if(arr[i]>arr[i-1])up++;else if(arr[i]<arr[i-1])down++;}
+  return {count:n,mean,median,std,cv,min:sorted[0],max:sorted[n-1],latest,upMonths:up,downMonths:down,meanMedianGap:mean>0?(mean-median)/mean*100:0};
+}
+
+function getBaselineValue(slot, s) {
+  if (!s || !s.count) return 0;
+  switch(slot.baselineType) {
+    case 'mean': return s.mean;
+    case 'median': return s.median;
+    case 'latest': return s.latest;
+    case 'best': return s.max;
+    case 'worst': return s.min;
+    case 'custom': {
+      const domVal = parseFloat(document.getElementById('sbaseCustomVal_' + slot.id)?.value);
+      const stateVal = parseFloat(slot.baselineCustomValue);
+      return !isNaN(stateVal) ? stateVal : (!isNaN(domVal) ? domVal : 0);
+    }
+    default: return 0;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PAYOUT CALC (per metric)
+// ══════════════════════════════════════════════════════════════════
+function calcSlotMonthlyPayout(id, monthlyAchieved, monthlyTarget) {
+  const type = document.getElementById('spayoutType_' + id).value;
+  const achievePct = monthlyTarget > 0 ? monthlyAchieved / monthlyTarget : 0;
+  if (type === 'per_unit') {
+    return (parseFloat(document.getElementById('srewardPerUnit_' + id).value)||0) * monthlyAchieved;
+  }
+  if (type === 'fixed_budget') {
+    const b = parseFloat(document.getElementById('sfixedBudget_' + id).value)||0;
+    const pro = document.getElementById('sprorated_' + id).checked;
+    if (achievePct >= 1) return b;
+    return pro ? b * achievePct : 0;
+  }
+  if (type === 'tiered') {
+    let total = 0;
+    document.querySelectorAll(`#stierBody_${id} tr`).forEach(row => {
+      const from = parseFloat(row.querySelector('.st-from').value)||0;
+      const to   = parseFloat(row.querySelector('.st-to').value)||Infinity;
+      const rew  = parseFloat(row.querySelector('.st-reward').value)||0;
+      if (monthlyAchieved > from) total += Math.min(monthlyAchieved, to) - from > 0 ? (Math.min(monthlyAchieved, to) - from) * rew : 0;
+    });
+    return total;
+  }
+  if (type === 'milestone') {
+    let best = 0;
+    document.querySelectorAll(`#smilestoneBody_${id} tr`).forEach(row => {
+      const thresh = parseFloat(row.querySelector('.sm-thresh').value);
+      const rew    = parseFloat(row.querySelector('.sm-reward').value)||0;
+      if (!isNaN(thresh) && monthlyAchieved >= thresh && rew > best) best = rew;
+    });
+    return best;
+  }
+  return 0;
+}
+
+function calcSlotPayout(id, total, sponsTarget) {
+  const dur = getDuration();
+  const mAchieved = dur > 0 ? total / dur : total;
+  const mTarget   = dur > 0 ? sponsTarget / dur : sponsTarget;
+  return calcSlotMonthlyPayout(id, mAchieved, mTarget) * dur;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// MAIN RECALC
+// ══════════════════════════════════════════════════════════════════
+function recalcAll() {
+  const dur = getDuration();
+  const worstPct = (document.getElementById('worstPct').value==='' ? 50 : parseFloat(document.getElementById('worstPct').value)) / 100;
+  const basePct  = (parseFloat(document.getElementById('basePct').value)||100) / 100;
+  const bestPct  = (parseFloat(document.getElementById('bestPct').value)||200) / 100;
+  const upfrontMo = getUpfront();
+  const upfrontTotal = upfrontMo * dur;
+
+  document.getElementById('displayDur').textContent = dur + ' month' + (dur>1?'s':'');
+  document.getElementById('sum-dur').textContent = dur + ' month' + (dur>1?'s':'');
+
+  if (document.getElementById('upfrontTotal'))
+    document.getElementById('upfrontTotal').textContent = upfrontTotal > 0 ? '$' + fmt(upfrontTotal, 0) : '--';
+
+  let allMetricPayouts = {worst:0, base:0, best:0};
+  let allMetricTargets = [];
+  let anyHasTarget = false;
+
+  slots.forEach(slot => {
+    const id = slot.id;
+    const vals = getSlotValues(id);
+    const s = calcStats(vals);
+    slot.stats = s;
+
+    // display stats
+    const sf = (eid, v, dec=2) => { const el=document.getElementById(eid); if(el) el.textContent = (v!==null&&v!==undefined) ? fmt(v,dec) : '--'; };
+    sf('ss_mean_'+id, s.mean); sf('ss_median_'+id, s.median); sf('ss_std_'+id, s.std);
+    sf('ss_cv_'+id, s.cv, 1); sf('ss_min_'+id, s.min); sf('ss_max_'+id, s.max);
+    sf('ss_latest_'+id, s.latest); sf('ss_count_'+id, s.count, 0);
+
+    // stat alerts
+    const alertsEl = document.getElementById('sstatAlerts_' + id);
+    if (alertsEl) {
+      alertsEl.innerHTML = '';
+      if (s.count) {
+        if (Math.abs(s.meanMedianGap||0) > 20) alertsEl.innerHTML += `<div class="alert alert-warn"><span class="alert-icon">⚠</span><span>Mean/Median gap ${(s.meanMedianGap||0).toFixed(1)}%. Mean may be inflated by outliers. Consider Median baseline.</span></div>`;
+        if ((s.cv||0) > 40) alertsEl.innerHTML += `<div class="alert alert-warn"><span class="alert-icon">⚠</span><span>High volatility (CV: ${(s.cv||0).toFixed(1)}%). Consider Median baseline or lower uplift.</span></div>`;
+        if (s.latest < (s.mean||0) * 0.75) alertsEl.innerHTML += `<div class="alert alert-danger"><span class="alert-icon">🔴</span><span>Recent performance below historical average. Validate partner pipeline.</span></div>`;
+      }
+    }
+
+    // baseline recommendation
+    const recEl = document.getElementById('sbaseRec_' + id);
+    const recTxt = document.getElementById('sbaseRecTxt_' + id);
+    if (recEl && recTxt && s.count) {
+      const suggestMedian = (s.cv||0) > 25 || Math.abs(s.meanMedianGap||0) > 15;
+      recTxt.textContent = suggestMedian
+        ? `Median recommended (CV: ${(s.cv||0).toFixed(1)}%, Mean/Median gap: ${Math.abs(s.meanMedianGap||0).toFixed(1)}%).`
+        : `Mean recommended. Performance is stable (CV: ${(s.cv||0).toFixed(1)}%).`;
+      recEl.style.display = 'flex';
+    }
+
+    // keep custom baseline synced in slot state so export/import is reliable
+    if (slot.baselineType === 'custom') {
+      const customEl = document.getElementById('sbaseCustomVal_' + id);
+      slot.baselineCustomValue = customEl ? customEl.value : (slot.baselineCustomValue || '');
+    }
+
+    // target calc
+    const baseline = getBaselineValue(slot, s);
+    const upliftPct = getSlotUplift(id) / 100;
+    const rawTarget = baseline * dur * (1 + upliftPct);
+    const roundedMonthly = applyRound(rawTarget / dur);
+    const displayMonthly = roundMode !== 'none' ? roundedMonthly : rawTarget / dur;
+    const displayTotal = displayMonthly * dur;
+    slot.sponsTarget = displayTotal;
+    slot.monthlyTarget = displayMonthly;
+
+    const targEl = document.getElementById('starg_' + id);
+    const moEl   = document.getElementById('smonthlytarg_' + id);
+    const baseValEl = document.getElementById('sbaseVal_' + id);
+    const baseLblEl = document.getElementById('sbaseTypeLbl_' + id);
+    if (targEl) targEl.textContent = roundMode !== 'none' ? Math.round(displayTotal).toLocaleString('en-US') : fmt(displayTotal, 1);
+    if (moEl) moEl.textContent = roundMode !== 'none' ? Math.round(displayMonthly).toLocaleString('en-US') : fmt(displayMonthly, 2);
+    if (baseValEl) baseValEl.textContent = fmt(baseline, 2);
+    if (baseLblEl) baseLblEl.textContent = slot.baselineType || 'Not selected';
+
+    // scenarios
+    const fmtScen = v => roundMode !== 'none' ? Math.round(v).toLocaleString('en-US') : fmt(v, 1);
+    const slotWorstPct = (() => { const el=document.getElementById('sWorstPct_'+id); return el ? (el.value===''?50:parseFloat(el.value)||0)/100 : worstPct; })();
+    const slotBasePct  = (() => { const el=document.getElementById('sBasePct_'+id);  return el ? (parseFloat(el.value)||100)/100 : basePct; })();
+    const slotBestPct  = (() => { const el=document.getElementById('sBestPct_'+id);  return el ? (parseFloat(el.value)||200)/100 : bestPct; })();
+    const worstTot = displayTotal * slotWorstPct;
+    const baseTot  = displayTotal * slotBasePct;
+    const bestTot  = displayTotal * slotBestPct;
+    slot.scenarios = {worst:worstTot, base:baseTot, best:bestTot};
+
+    const setScen = (sfx, total, pct) => {
+      const pEl = document.getElementById('ssc_'+sfx+'_'+id);
+      const dEl = document.getElementById('ssc_'+sfx+'_d_'+id);
+      const mo = dur > 0 ? total / dur : total;
+      if (pEl) pEl.textContent = fmtScen(total);
+      if (dEl) dEl.innerHTML = `<b>${(pct*100).toFixed(0)}% of target</b><br>/ mo: ${fmtScen(mo)}`;
+    };
+    setScen('worst', worstTot, slotWorstPct);
+    setScen('base',  baseTot,  slotBasePct);
+    setScen('best',  bestTot,  slotBestPct);
+
+    // payout per metric
+    const wPayout = worstTot === 0 ? 0 : calcSlotPayout(id, worstTot, displayTotal);
+    const bPayout = calcSlotPayout(id, baseTot, displayTotal);
+    const bePayout = calcSlotPayout(id, bestTot, displayTotal);
+    slot.payouts = {worst:wPayout, base:bPayout, best:bePayout};
+
+    function payoutDetail(achieved, perf) {
+      const mA = dur > 0 ? achieved / dur : achieved;
+      const mT = dur > 0 ? displayTotal / dur : displayTotal;
+      const mR = calcSlotMonthlyPayout(id, mA, mT);
+      let l = `<b>Duration:</b> ${dur} month${dur>1?'s':''}<br>`;
+      l += `<b>Monthly achieved:</b> ${fmtScen(mA)}<br>`;
+      l += `<b>Monthly reward:</b> $${fmt(mR, 0)}<br>`;
+      l += `<b>Total performance payout:</b> $${fmt(perf, 0)}`;
+      return l;
+    }
+
+    const setPayEl = (sfx, tot, pay) => {
+      const hEl = document.getElementById('spw_'+sfx+'_'+id);
+      const dEl = document.getElementById('spw_'+sfx+'_d_'+id);
+      if (hEl) hEl.textContent = '$' + fmt(pay, 0);
+      if (dEl) dEl.innerHTML = payoutDetail(tot, pay);
+    };
+    setPayEl('worst', worstTot, wPayout);
+    setPayEl('base',  baseTot,  bPayout);
+    setPayEl('best',  bestTot,  bePayout);
+
+    if (displayTotal > 0) {
+      anyHasTarget = true;
+      allMetricTargets.push({metric: slot.metric||'Metric', target: displayTotal, monthly: displayMonthly});
+    }
+    allMetricPayouts.worst  += wPayout;
+    allMetricPayouts.base   += bPayout;
+    allMetricPayouts.best   += bePayout;
+
+    // milestone max
+    const mmEl = document.getElementById('smilestoneMax_' + id);
+    if (mmEl) {
+      let mm = 0;
+      document.querySelectorAll(`#smilestoneBody_${id} tr`).forEach(row => {
+        const r = parseFloat(row.querySelector('.sm-reward').value)||0;
+        if (r > mm) mm = r;
+      });
+      mmEl.textContent = mm > 0 ? '$' + fmt(mm, 0) : '--';
+    }
+
+    // distribution chart
+    drawSlotChart(id, vals, s);
+  });
+
+  // ── COMBINED PAYOUT ────────────────────────────────────────────
+  const upTotal = upfrontTotal;
+  let combWorst = allMetricPayouts.worst + upTotal;
+  let combBase  = allMetricPayouts.base  + upTotal;
+  let combBest  = allMetricPayouts.best  + upTotal;
+
+  // All-or-nothing check
+  let allHit = true;
+  if (payoutLogic === 'all_or_nothing') {
+    slots.forEach(slot => {
+      if (slot.sponsTarget > 0 && (slot.scenarios.base / slot.sponsTarget) < 1) allHit = false;
+    });
+  }
+
+  const logicEl = document.getElementById('payoutLogicAlert');
+  const aonWarn = document.getElementById('allOrNothingWarn');
+
+  if (payoutLogic === 'all_or_nothing') {
+    // still show potential, but warn
+    const missedMetrics = slots.filter(s => s.sponsTarget > 0 && basePct < 1).map(s => s.metric||'Metric');
+    if (logicEl) logicEl.innerHTML = '';
+    if (aonWarn) {
+      const anyMiss = slots.some(s => s.sponsTarget > 0 && s.scenarios.base < s.sponsTarget);
+      if (anyMiss) {
+        aonWarn.style.display = 'block';
+        aonWarn.innerHTML = `<div class="alert alert-danger"><span class="alert-icon">🔴</span><span><strong>All-or-Nothing:</strong> One or more metrics may not reach 100% in Base scenario. Payout shown is potential only. Actual payout = $0 performance if any metric misses, plus upfront $${fmt(upTotal,0)} if applicable.</span></div>`;
+      } else {
+        aonWarn.style.display = 'none';
+      }
+    }
+  } else if (payoutLogic === 'discretion') {
+    if (aonWarn) {
+      aonWarn.style.display = 'block';
+      aonWarn.innerHTML = `<div class="alert alert-approval"><span class="alert-icon">&#9878;</span><span><strong>Manager Discretion:</strong> Payouts below are calculated based on scenario achievement %. Final payout requires <strong>CD/RD approval</strong> before processing.</span></div>`;
+    }
+    if (logicEl) logicEl.innerHTML = '';
+  } else {
+    if (aonWarn) aonWarn.style.display = 'none';
+    if (logicEl) logicEl.innerHTML = '';
+  }
+
+  // Combined payout display
+  function setComb(sfx, total) {
+    const el = document.getElementById('comb-' + sfx);
+    const del = document.getElementById('comb-' + sfx + '-detail');
+    if (el) el.textContent = '$' + fmt(total, 0) + (payoutLogic === 'discretion' ? ' *' : '');
+    if (del) {
+      let detail = '';
+      slots.forEach(s => {
+        const pay = s.payouts[sfx] || 0;
+        detail += `${s.metric||'Metric'}: $${fmt(pay, 0)}<br>`;
+      });
+      if (upTotal > 0) detail += `Upfront: $${fmt(upTotal, 0)}<br>`;
+      if (payoutLogic === 'discretion') detail += `<em style="color:#283593">Pending CD/RD approval</em>`;
+      if (payoutLogic === 'all_or_nothing') detail += `<em style="color:#c0392b">* Potential only if all metrics hit</em>`;
+      del.innerHTML = detail;
+    }
+  }
+  setComb('worst', combWorst);
+  setComb('base',  combBase);
+  setComb('best',  combBest);
+
+  state.maxBudgetBest = combBest;
+  const scInput = document.getElementById('sponsorCost');
+  if (scInput && !scInput.dataset.manualOverride) {
+    scInput.value = combBest > 0 ? combBest.toFixed(2) : '';
+  }
+
+  // ── SIDEBAR ────────────────────────────────────────────────────
+  const metricNames = slots.map(s => s.metric).filter(Boolean);
+  document.getElementById('sum-metrics-list').textContent = metricNames.length ? metricNames.join(', ') : 'Not selected';
+  document.getElementById('sum-logic').textContent = {
+    independent: 'Independent',
+    all_or_nothing: 'All-or-Nothing',
+    discretion: 'Manager Discretion (CD/RD)'
+  }[payoutLogic] || payoutLogic;
+
+  // per-metric rows in sidebar
+  const rowsEl = document.getElementById('sum-metric-rows');
+  if (rowsEl) {
+    rowsEl.innerHTML = '';
+    slots.forEach(slot => {
+      const fmtT = v => roundMode !== 'none' ? Math.round(v).toLocaleString('en-US') : fmt(v, 1);
+      const fmtScenVal = v => roundMode!=='none' ? Math.round(v).toLocaleString('en-US') : fmt(v,1);
+      const div = document.createElement('div');
+      div.className = 'sum-block';
+      div.style.padding = '8px 12px';
+      div.innerHTML = `
+        <div class="sum-blk-label">${slot.metric || 'Metric (unset)'}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px">
+          <div><div style="font-size:9px;color:rgba(255,255,255,.4)">Target (total)</div><div style="font-size:13px;font-weight:700;color:var(--yellow)">${slot.sponsTarget > 0 ? fmtT(slot.sponsTarget) : '--'}</div></div>
+          <div><div style="font-size:9px;color:rgba(255,255,255,.4)">/ month</div><div style="font-size:13px;font-weight:700;color:var(--white)">${slot.monthlyTarget > 0 ? fmtT(slot.monthlyTarget) : '--'}</div></div>
+        </div>
+        <div style="dis          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-top:6px">
+          <div style="text-align:center;background:rgba(192,57,43,.2);border-radius:5px;padding:5px 4px"><div style="font-size:8px;color:rgba(255,255,255,.4)">WORST</div><div style="font-size:11px;font-weight:700;color:#e74c3c">${slot.sponsTarget>0?fmtScenVal(slot.scenarios.worst):'--'}</div><div style="font-size:9px;color:rgba(255,255,255,.4)">mo: ${slot.sponsTarget>0&&dur>0?fmtScenVal(slot.scenarios.worst/dur):'--'}</div></div>
+          <div style="text-align:center;background:rgba(39,174,96,.2);border-radius:5px;padding:5px 4px"><div style="font-size:8px;color:rgba(255,255,255,.4)">BASE</div><div style="font-size:11px;font-weight:700;color:#2ecc71">${slot.sponsTarget>0?fmtScenVal(slot.scenarios.base):'--'}</div><div style="font-size:9px;color:rgba(255,255,255,.4)">mo: ${slot.sponsTarget>0&&dur>0?fmtScenVal(slot.scenarios.base/dur):'--'}</div></div>
+          <div style="text-align:center;background:rgba(255,222,2,.15);border-radius:5px;padding:5px 4px"><div style="font-size:8px;color:rgba(255,255,255,.4)">BEST</div><div style="font-size:11px;font-weight:700;color:var(--yellow)">${slot.sponsTarget>0?fmtScenVal(slot.scenarios.best):'--'}</div><div style="font-size:9px;color:rgba(255,255,255,.4)">mo: ${slot.sponsTarget>0&&dur>0?fmtScenVal(slot.scenarios.best/dur):'--'}</div></div>
+        </div>`;
+      rowsEl.appendChild(div);
+    });
+  }
+
+  document.getElementById('sum-combined-payout').textContent =
+    '$' + fmt(combWorst,0) + ' / $' + fmt(combBase,0) + ' / $' + fmt(combBest,0)
+    + (upTotal > 0 ? ' (incl. upfront)' : '');
+
+  const hintEl = document.getElementById('maxBudgetHint');
+  if (hintEl) hintEl.textContent = combBest > 0 ? 'Max Budget (Best) = $' + fmt(combBest, 0) : '';
+
+  recalcROI();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ROI
+// ══════════════════════════════════════════════════════════════════
+function recalcROI() {
+  const rev = parseFloat(document.getElementById('estRevInput').value) || 0;
+  const cost = parseFloat(document.getElementById('sponsorCost').value) || 0;
+  const totalCost = cost || state.maxBudgetBest;
+  const net = rev - totalCost;
+  const roi = totalCost > 0 ? (rev - totalCost) / totalCost * 100 : null;
+
+  document.getElementById('roi-rev').textContent  = rev > 0 ? '$' + fmt(rev, 0) : '--';
+  document.getElementById('roi-cost').textContent = '$' + fmt(totalCost, 0);
+  document.getElementById('roi-net').textContent  = rev > 0 ? (net>=0?'+$':'-$') + fmt(Math.abs(net),0) : '--';
+  document.getElementById('roi-pct').textContent  = (roi!==null&&rev>0) ? fmt(roi,1)+'%' : '--';
+
+  const bar = document.getElementById('roiBar');
+  const verd = document.getElementById('roiVerdict');
+  if (roi !== null && rev > 0) {
+    bar.style.width = Math.min(Math.max(roi,0),200)/2 + '%';
+    bar.style.background = roi>=50?'var(--yellow)':roi>=0?'#27ae60':'#e74c3c';
+    verd.style.display = 'flex';
+    if (roi>=50) { verd.className='alert alert-info'; verd.innerHTML=`<span class="alert-icon">✅</span><span>Positive ROI (${fmt(roi,1)}%). Strong commercial case.</span>`; }
+    else if (roi>=0) { verd.className='alert alert-warn'; verd.innerHTML=`<span class="alert-icon">⚖</span><span>Break-even risk (${fmt(roi,1)}%). Consider adjusting payout or target.</span>`; }
+    else { verd.className='alert alert-danger'; verd.innerHTML=`<span class="alert-icon">🔴</span><span>Negative ROI (${fmt(roi,1)}%). Strengthen target or reduce cost.</span>`; }
+  } else { verd.style.display='none'; bar.style.width='0%'; }
+
+  updateSumRevenue();
+  const costEl = document.getElementById('sum-cost');
+  if (costEl) costEl.textContent = cost > 0 ? '$' + fmt(cost, 0) : '--';
+}
+
+function updateSumRevenue() {
+  const rev = parseFloat(document.getElementById('estRevInput').value) || 0;
+  const logic = document.getElementById('revLogic').value || '';
+  const el = document.getElementById('sum-revenue');
+  const elL = document.getElementById('sum-rev-logic');
+  if (el) el.textContent = rev > 0 ? '$' + fmt(rev, 0) : '--';
+  if (elL) elL.textContent = logic ? logic.substring(0,80)+(logic.length>80?'...':'') : '';
+}
+
+function useMaxBudget() {
+  const max = state.maxBudgetBest;
+  if (!max) { alert('Calculate payout first in Section 3.'); return; }
+  document.getElementById('sponsorCost').value = max.toFixed(2);
+  recalcROI();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// DISTRIBUTION CHART
+// ══════════════════════════════════════════════════════════════════
+function drawSlotChart(id, values, stats) {
+  const canvas = document.getElementById('distCanvas_' + id);
+  const empty  = document.getElementById('distEmpty_' + id);
+  const insight = document.getElementById('distInsight_' + id);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  const CW = Math.max(rect.width - 28, 200);
+  const CH = 180;
+  canvas.width = CW*dpr; canvas.height = CH*dpr;
+  canvas.style.width = CW+'px'; canvas.style.height = CH+'px';
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, CW, CH);
+
+  if (!values || values.length < 2) { if(empty)empty.style.display='flex'; if(insight)insight.style.display='none'; return; }
+  if (empty) empty.style.display='none';
+
+  const YELLOW='#ffde02',GREY='#6d6e73',MIDNIGHT='#070e20';
+  const PAD={top:24,right:16,bottom:32,left:38};
+  const W=CW-PAD.left-PAD.right, H=CH-PAD.top-PAD.bottom;
+  const {mean,median,cv=0,min:minV,max:maxV} = stats;
+  const range = (maxV-minV)||1;
+  const suggestMedian = cv>25||Math.abs(stats.meanMedianGap||0)>15;
+  const nBins = Math.min(Math.max(Math.ceil(Math.sqrt(values.length)),5),12);
+  const binW = range/nBins;
+  const bins = Array(nBins).fill(0);
+  values.forEach(v=>{let b=Math.floor((v-minV)/binW);if(b>=nBins)b=nBins-1;bins[b]++;});
+  const maxCount=Math.max(...bins)||1;
+  const xS = v=>PAD.left+((v-minV)/range)*W;
+  const yS = c=>PAD.top+H-(c/maxCount)*H;
+
+  ctx.fillStyle='#f5f5f5';ctx.fillRect(0,0,CW,CH);
+  ctx.strokeStyle='#e0e4ea';ctx.lineWidth=0.5;
+  [.25,.5,.75,1].forEach(r=>{
+    const y=PAD.top+H*(1-r);
+    ctx.beginPath();ctx.moveTo(PAD.left,y);ctx.lineTo(PAD.left+W,y);ctx.stroke();
+    ctx.fillStyle=GREY;ctx.font='9px Poppins,sans-serif';ctx.textAlign='right';
+    ctx.fillText(Math.round(maxCount*r),PAD.left-4,y+3);
+  });
+
+  const bwPx=W/nBins;
+  bins.forEach((c,i)=>{
+    if(!c)return;
+    const x=PAD.left+i*bwPx,y=yS(c),bh=CH-PAD.bottom-y;
+    ctx.fillStyle='rgba(71,102,123,.25)';ctx.fillRect(x+1,y,bwPx-2,bh);
+    ctx.strokeStyle='rgba(71,102,123,.5)';ctx.lineWidth=0.5;ctx.strokeRect(x+1,y,bwPx-2,bh);
+  });
+
+  const bw=1.06*(stats.std||1)*Math.pow(values.length,-0.2);
+  const nPts=100;const step=range/nPts;const kde=[];
+  for(let i=0;i<=nPts;i++){const x=minV+i*step;let d=0;values.forEach(v=>{const u=(x-v)/bw;d+=Math.exp(-.5*u*u)/Math.sqrt(2*Math.PI);});kde.push({x,d:d/(values.length*bw)});}
+  const maxD=Math.max(...kde.map(p=>p.d))||1;
+  const dS=d=>PAD.top+H-(d/maxD)*H*.88;
+  ctx.beginPath();ctx.strokeStyle='rgba(71,102,123,.7)';ctx.lineWidth=2;ctx.lineJoin='round';
+  kde.forEach((p,i)=>{const px=xS(p.x),py=dS(p.d);i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);});ctx.stroke();
+
+  function drawLine(val,label,color,dash){
+    const x=xS(val);
+    ctx.save();ctx.strokeStyle=color;ctx.lineWidth=2;ctx.setLineDash(dash||[]);
+    ctx.beginPath();ctx.moveTo(x,PAD.top);ctx.lineTo(x,CH-PAD.bottom);ctx.stroke();ctx.setLineDash([]);
+    const lw=ctx.measureText(label).width+10,lh=16;
+    let lx=x-lw/2;lx=Math.max(PAD.left+2,Math.min(lx,PAD.left+W-lw-2));
+    const ly=PAD.top-lh-2;
+    ctx.fillStyle=color;ctx.beginPath();
+    if(ctx.roundRect)ctx.roundRect(lx,ly,lw,lh,3);else ctx.rect(lx,ly,lw,lh);
+    ctx.fill();
+    ctx.fillStyle=color===YELLOW?MIDNIGHT:'#fff';ctx.font='bold 9px Poppins,sans-serif';ctx.textAlign='center';
+    ctx.fillText(label,lx+lw/2,ly+11);ctx.restore();
+  }
+  const mc=suggestMedian?GREY:YELLOW,mec=suggestMedian?YELLOW:GREY;
+  if(suggestMedian){drawLine(mean,`Mean:${fmt(mean,1)}`,mc,[4,3]);drawLine(median,`Median:${fmt(median,1)}`,mec);}
+  else{drawLine(median,`Median:${fmt(median,1)}`,mec,[4,3]);drawLine(mean,`Mean:${fmt(mean,1)}`,mc);}
+
+  ctx.fillStyle=GREY;ctx.font='9px Poppins,sans-serif';ctx.textAlign='center';
+  const ticks=Math.min(nBins,6);
+  for(let i=0;i<=ticks;i++){const v=minV+(range/ticks)*i;ctx.fillText(fmt(v,0),xS(v),CH-PAD.bottom+12);}
+
+  if(insight){
+    insight.style.display='block';
+    const skew=mean-median;
+    const skewDir=Math.abs(skew)<range*.05?'symmetric':skew>0?'right-skewed (high outliers pulling mean up)':'left-skewed (low outliers pulling mean down)';
+    insight.innerHTML=(suggestMedian?`<span style="color:var(--dark-yellow);font-weight:700">Median recommended.</span> `:`<span style="color:var(--dark-yellow);font-weight:700">Mean recommended.</span> `)
+      +(cv>40?`High volatility (CV:${cv.toFixed(1)}%). `:`Mean/Median gap ${Math.abs(stats.meanMedianGap||0).toFixed(1)}%. `)
+      +`Distribution is <strong>${skewDir}</strong>.`;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// EXPORT SUMMARY
+// ══════════════════════════════════════════════════════════════════
+function generateSummary() {
+  const box = document.getElementById('summaryBox');
+  const out = document.getElementById('summaryText');
+  box.style.display = 'block';
+
+  const pName = document.getElementById('partnerName').value || '<Insert Partner Name>';
+  const pUID  = document.getElementById('partnerUID').value  || '<Insert Partner UID>';
+  const prmN  = document.getElementById('prmName').value     || 'N/A';
+  const spName= document.getElementById('sponsorshipName').value || 'N/A';
+  const notes = document.getElementById('sponsorshipNotes').value || '';
+  const dur   = getDuration();
+  const now   = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  const logicLabel = {independent:'Independent',all_or_nothing:'All-or-Nothing',discretion:'Manager Discretion (CD/RD approval required)'}[payoutLogic];
+  const upfrontMo = getUpfront();
+  const upfrontTotal = upfrontMo * dur;
+  const estRevenue = parseFloat(document.getElementById('estRevInput').value)||0;
+  const sponsorCost = parseFloat(document.getElementById('sponsorCost').value)||0;
+  const roiPct = sponsorCost>0&&estRevenue>0 ? ((estRevenue-sponsorCost)/sponsorCost*100).toFixed(1) : 'N/A';
+  const revLogic = document.getElementById('revLogic').value || '<Fill in Section 4>';
+
+  const fmtT = v => roundMode!=='none' ? Math.round(v).toLocaleString('en-US') : fmt(v,1);
+
+  // Build per-metric sections
+  let metricHowBlocks = '';
+  let metricExpected = '';
+  let metricLinks = '';
+  let combWorst=0,combBase=0,combBest=0;
+
+  slots.forEach((slot,i) => {
+    const m = slot.metric || `Metric ${i+1}`;
+    const bt = slot.baselineType || 'N/A';
+    const bv = fmt(getBaselineValue(slot, slot.stats), 2);
+    const up = getSlotUplift(slot.id);
+    metricHowBlocks += `
+  Metric ${i+1}         :  ${m}
+  Monthly Target    :  ${fmtT(slot.monthlyTarget)}
+  Total Target      :  ${fmtT(slot.sponsTarget)} over ${dur} month${dur>1?'s':''}
+  Baseline          :  ${bt.toUpperCase()} = ${bv} | Uplift: +${up}%`;
+    const rl = document.getElementById('reportLink_' + slot.id).value || '<Insert MetaBase/Tableau link>';
+    metricLinks += `  ${m} validation    :  ${rl}\n`;
+    metricExpected += `  ${m}:
+    Worst (${document.getElementById('worstPct').value||50}%): ${fmtT(slot.scenarios.worst)} | Payout: $${fmt(slot.payouts.worst,0)}
+    Base  (${document.getElementById('basePct').value||100}%): ${fmtT(slot.scenarios.base)}  | Payout: $${fmt(slot.payouts.base,0)}
+    Best  (${document.getElementById('bestPct').value||200}%): ${fmtT(slot.scenarios.best)} | Payout: $${fmt(slot.payouts.best,0)}\n`;
+    combWorst += slot.payouts.worst;
+    combBase  += slot.payouts.base;
+    combBest  += slot.payouts.best;
+  });
+
+  combWorst += upfrontTotal; combBase += upfrontTotal; combBest += upfrontTotal;
+
+  let aonNote = '';
+  if (payoutLogic==='all_or_nothing') aonNote = `\n  ⚠ All-or-Nothing: if any metric misses 100%, performance payout = $0. Upfront ($${fmt(upfrontTotal,0)}) still paid.`;
+  if (payoutLogic==='discretion') aonNote = `\n  ⚠ Manager Discretion: final payout requires CD/RD approval.`;
+
+  const text =
+`WHAT
+${spName !== 'N/A' ? spName : '<Describe what Partner is organizing; what is the initiative about>'}
+
+WHY
+${notes || '<Provide the reason why Partner came with this initiative and why we need to pay sponsorship>'}
+
+HOW
+Sponsorship Structure:${metricHowBlocks}
+${upfrontMo > 0 ? `  Upfront payment   :  $${fmt(upfrontMo,0)}/month x ${dur} months = $${fmt(upfrontTotal,0)} total\n` : ''}  Payout Logic      :  ${logicLabel}
+
+====================================================
+JUSTIFICATION OF SPONSORSHIP
+====================================================
+Partner Name                              -  ${pName}
+Partner UID                               -  ${pUID}
+Partner website/SM channel                -  <Insert a link>
+Partner last 3 months NSR                 -  <Insert Value>
+Partner last 12 months NSR                -  <Insert Value>
+Sponsorship given within last 12 months   -  <Yes/No>
+Sponsorship last 12 months (total USD)    -  <Insert amount (skip if No)>
+
+Expected results
+${metricExpected}
+  Combined Payout (${logicLabel}):
+    Worst: $${fmt(combWorst,0)}  |  Base: $${fmt(combBase,0)}  |  Best: $${fmt(combBest,0)}${aonNote}
+
+ROI calculation logic
+  Total Sponsorship Cost                  :  $${fmt(sponsorCost||state.maxBudgetBest,0)}
+  Estimated Revenue                       :  ${estRevenue>0?'$'+fmt(estRevenue,0):'<Fill in Section 4>'}
+  ROI%                                    :  ${roiPct!=='N/A'?roiPct+'%':'N/A - fill Section 4>'}
+  Revenue Logic                           :  ${revLogic}
+
+Supporting files
+  MetaBase report for target achievement validation  -  <Link>
+${metricLinks}  <Add any additional calculation sheets, queries, and mechanism descriptions>
+
+====================================================
+Generated: ${now} | PRM: ${prmN} | Tool: Exness Sponsorship Target Calculator v2
+All data processed locally. Not for external distribution.
+====================================================`;
+
+  out.textContent = text;
+}
+
+function shareStateURL() {
+  try {
+    const state = captureState();
+    const json = JSON.stringify(state);
+    const b64 = btoa(encodeURIComponent(json));
+    const url = window.location.origin + window.location.pathname + '?d=' + b64;
+    const box = document.getElementById('shareURLBox');
+    const inp = document.getElementById('shareURLInput');
+    box.style.display = 'block';
+    inp.value = url;
+  } catch(e) {
+    alert('Could not generate share URL: ' + e.message);
+  }
+}
+
+function copyShareURL() {
+  const inp = document.getElementById('shareURLInput');
+  if (!inp) return;
+  navigator.clipboard.writeText(inp.value).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy URL', 1800);
+  });
+}
+
+function captureState() {
+  const s = {
+    v: 2,
+    partnerName: document.getElementById('partnerName').value,
+    partnerUID:  document.getElementById('partnerUID').value,
+    prmName:     document.getElementById('prmName').value,
+    sponsorshipName: document.getElementById('sponsorshipName').value,
+    sponsorshipNotes: document.getElementById('sponsorshipNotes').value,
+    dur: getDuration(),
+    roundMode,
+    payoutLogic,
+    upfront: document.getElementById('upfrontToggle').checked,
+    upfrontMo: document.getElementById('upfrontMonthly').value,
+    estRev: document.getElementById('estRevInput').value,
+    revLogic: document.getElementById('revLogic').value,
+    sponsorCost: document.getElementById('sponsorCost').value,
+    slots: slots.map(slot => ({
+      metric: slot.metric,
+      reportLink: document.getElementById('reportLink_'+slot.id).value,
+      slotYear: document.getElementById('slotYear_'+slot.id).value,
+      slotFrom: document.getElementById('slotFromMo_'+slot.id).value,
+      slotTo:   document.getElementById('slotToMo_'+slot.id).value,
+      rows: Array.from(document.querySelectorAll('#stbody_'+slot.id+' tr')).map(tr => ({
+        label: tr.querySelectorAll('input')[0].value,
+        val:   tr.querySelectorAll('input')[1].value,
+        note:  tr.querySelectorAll('input')[2].value,
+      })),
+      baselineType: slot.baselineType,
+      baselineCustomValue: slot.baselineCustomValue || document.getElementById('sbaseCustomVal_'+slot.id)?.value || '',
+      uplift: getSlotUplift(slot.id),
+      payoutType: document.getElementById('spayoutType_'+slot.id).value,
+      rewardPerUnit: document.getElementById('srewardPerUnit_'+slot.id)?.value,
+      fixedBudget:   document.getElementById('sfixedBudget_'+slot.id)?.value,
+      prorated:      document.getElementById('sprorated_'+slot.id)?.checked,
+      tiers: Array.from(document.querySelectorAll('#stierBody_'+slot.id+' tr')).map(tr => ({
+        from: tr.querySelector('.st-from').value,
+        to:   tr.querySelector('.st-to').value,
+        rew:  tr.querySelector('.st-reward').value
+      })),
+      milestones: Array.from(document.querySelectorAll('#smilestoneBody_'+slot.id+' tr')).map(tr => ({
+        thresh: tr.querySelector('.sm-thresh').value,
+        rew:    tr.querySelector('.sm-reward').value
+      })),
+      worstPct: document.getElementById('sWorstPct_'+slot.id)?.value,
+      basePct:  document.getElementById('sBasePct_'+slot.id)?.value,
+      bestPct:  document.getElementById('sBestPct_'+slot.id)?.value,
+    }))
+  };
+  return s;
+}
+
+function loadStateFromObject(s) {
+  if (!s || s.v !== 2) return;
+  try {
+
+    if (!s || s.v !== 2) return;
+    // Fill partner fields
+    document.getElementById('partnerName').value = s.partnerName || '';
+    document.getElementById('partnerUID').value  = s.partnerUID  || '';
+    document.getElementById('prmName').value     = s.prmName     || '';
+    document.getElementById('sponsorshipName').value  = s.sponsorshipName  || '';
+    document.getElementById('sponsorshipNotes').value = s.sponsorshipNotes || '';
+    // Duration
+    document.querySelectorAll('#durChips .chip').forEach(b => {
+      b.classList.toggle('active', b.dataset.dur === String(s.dur) || (b.dataset.dur==='custom' && ![1,3,6,12].includes(s.dur)));
+    });
+    if (![1,3,6,12].includes(s.dur)) {
+      document.getElementById('durCustomWrap').style.display='block';
+      document.getElementById('durCustomVal').value = s.dur;
+    }
+    // Round mode
+    document.querySelectorAll('#roundChips .chip').forEach(b => b.classList.toggle('active', b.dataset.round === s.roundMode));
+    roundMode = s.roundMode || 'none';
+    // Payout logic
+    document.querySelectorAll('.plogic-btn').forEach(b => b.classList.toggle('active', b.dataset.logic === s.payoutLogic));
+    payoutLogic = s.payoutLogic || 'independent';
+    // Upfront
+    document.getElementById('upfrontToggle').checked = !!s.upfront;
+    toggleUpfront();
+    document.getElementById('upfrontMonthly').value = s.upfrontMo || '';
+    // ROI
+    document.getElementById('estRevInput').value  = s.estRev || '';
+    document.getElementById('revLogic').value     = s.revLogic || '';
+    document.getElementById('sponsorCost').value  = s.sponsorCost || '';
+    // Remove default slot, add loaded slots
+    const slotContainer = document.getElementById('metricSlots');
+    slotContainer.innerHTML = '';
+    slots = [];
+    (s.slots || []).forEach(sd => {
+      addMetricSlot();
+      const slot = slots[slots.length - 1];
+      const id = slot.id;
+      // Metric
+      if (sd.metric) {
+        const btn = document.querySelector(`#slot_el_${id} .metric-btn[data-metric='${sd.metric}']`);
+        if (btn) selectSlotMetric(id, btn);
+      }
+      // Report link + date range
+      const rlEl = document.getElementById('reportLink_'+id);
+      if (rlEl) rlEl.value = sd.reportLink || '';
+      const yrEl = document.getElementById('slotYear_'+id);
+      if (yrEl) yrEl.value = sd.slotYear || '';
+      const fmEl = document.getElementById('slotFromMo_'+id);
+      if (fmEl) fmEl.value = sd.slotFrom || 1;
+      const tmEl = document.getElementById('slotToMo_'+id);
+      if (tmEl) tmEl.value = sd.slotTo || 12;
+      // Rows
+      const tbody = document.getElementById('stbody_'+id);
+      if (tbody) tbody.innerHTML = '';
+      (sd.rows || []).forEach(r => {
+        addSlotRow(id, r.label);
+        const rows = document.querySelectorAll('#stbody_'+id+' tr');
+        const last = rows[rows.length-1];
+        last.querySelectorAll('input')[1].value = r.val;
+        last.querySelectorAll('input')[2].value = r.note || '';
+      });
+      // Baseline
+      if (sd.baselineType) {
+        const bBtn = document.querySelector(`#sbaseChips_${id} .chip[data-base='${sd.baselineType}']`);
+        if (bBtn) {
+          selBase(id, bBtn);
+          if (sd.baselineType === 'custom') {
+            const customEl = document.getElementById('sbaseCustomVal_'+id);
+            const customValue = sd.baselineCustomValue || '';
+            if (customEl) customEl.value = customValue;
+            const currentSlot = slots.find(slt => slt.id === id);
+            if (currentSlot) currentSlot.baselineCustomValue = customValue;
+            recalcAll();
+          }
+        }
+      }
+      // Uplift
+      const upBtn = document.querySelector(`#supliftChips_${id} .chip[data-up='${sd.uplift}']`)
+               || document.querySelector(`#supliftChips_${id} .chip[data-up='custom']`);
+      if (upBtn) selUplift(id, upBtn);
+      const custUplift = document.getElementById('supliftCustomVal_'+id);
+      if (custUplift) custUplift.value = sd.uplift;
+      // Payout type
+      const ptEl = document.getElementById('spayoutType_'+id);
+      if (ptEl) { ptEl.value = sd.payoutType || 'per_unit'; switchSlotPayout(id, ptEl.value); }
+      const rpuEl = document.getElementById('srewardPerUnit_'+id);
+      if (rpuEl) rpuEl.value = sd.rewardPerUnit || '';
+      const fbEl = document.getElementById('sfixedBudget_'+id);
+      if (fbEl) fbEl.value = sd.fixedBudget || '';
+      const proEl = document.getElementById('sprorated_'+id);
+      if (proEl) proEl.checked = !!sd.prorated;
+      // Tiers
+      const tierBody = document.getElementById('stierBody_'+id);
+      if (tierBody) { tierBody.innerHTML=''; (sd.tiers||[]).forEach(t => addSlotTier(id,t.from,t.to,t.rew)); }
+      // Milestones
+      const msBody = document.getElementById('smilestoneBody_'+id);
+      if (msBody) { msBody.innerHTML=''; (sd.milestones||[]).forEach(m => addSlotMilestone(id,m.thresh,m.rew)); }
+      // Scenario %
+      const wEl=document.getElementById('sWorstPct_'+id); if(wEl) wEl.value=sd.worstPct||50;
+      const bEl=document.getElementById('sBasePct_'+id);  if(bEl) bEl.value=sd.basePct||100;
+      const beEl=document.getElementById('sBestPct_'+id); if(beEl) beEl.value=sd.bestPct||200;
+    });
+    recalcAll();
+    console.log('State loaded.');
+  } catch(e) {
+    console.warn('Could not load state:', e);
+  }
+}
+
+function loadStateFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const d = params.get('d');
+  if (!d) return;
+  try {
+    const json = decodeURIComponent(atob(d));
+    const s = JSON.parse(json);
+    loadStateFromObject(s);
+  } catch(e) {
+    console.warn('Could not load state from URL:', e);
+  }
+}
+
+// Auto-load on page start
+window.addEventListener('load', () => { loadStateFromURL(); });
+
+function copySummary() {
+  const text = document.getElementById('summaryText').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target; btn.textContent='Copied!';
+    setTimeout(()=>btn.textContent='Copy Summary',1800);
+  });
+}
+
+function exportJSON() {
+  try {
+    const state = captureState();
+    const json  = JSON.stringify(state, null, 2);
+    const blob  = new Blob([json], { type: 'application/json' });
+    const a = document.createElement('a');
+    const uid = document.getElementById('partnerUID').value || 'partner';
+    const name = document.getElementById('sponsorshipName').value || 'sponsorship';
+    a.href = URL.createObjectURL(blob);
+    const now = new Date();
+    const ts = now.getFullYear()
+      + '-' + String(now.getMonth()+1).padStart(2,'0')
+      + '-' + String(now.getDate()).padStart(2,'0')
+      + '_' + String(now.getHours()).padStart(2,'0')
+      + '-' + String(now.getMinutes()).padStart(2,'0')
+      + '-' + String(now.getSeconds()).padStart(2,'0');
+    a.download = `sponsorship_${uid}_${name.replace(/\s+/g,'_').substring(0,30)}_${ts}.json`;
+    a.click();
+  } catch(e) {
+    alert('Export failed: ' + e.message);
+  }
+}
+
+function importJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const s = JSON.parse(e.target.result);
+      if (!s || s.v !== 2) {
+        alert('Invalid or incompatible JSON file. Only v2 files are supported.');
+        return;
+      }
+      // Reuse loadStateFromURL logic by passing the parsed object directly
+      loadStateFromObject(s);
+      // Show BD Ops status panel if visible
+      const statusEl = document.getElementById('bdOpsLoadStatus');
+      const msgEl    = document.getElementById('bdOpsLoadMsg');
+      if (statusEl) {
+        statusEl.style.display = 'flex';
+        if (msgEl) msgEl.textContent = 'State loaded from ' + file.name + '. All fields are pre-filled with the PRM submitted data.';
+      } else {
+        alert('State loaded successfully.');
+      }
+    } catch(err) {
+      alert('Could not parse JSON file: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  // Reset input so same file can be re-imported
+  event.target.value = '';
+}
+
+function exportCSV() {
+  let rows = [['Field','Value'],
+    ['Partner Name', document.getElementById('partnerName').value],
+    ['Partner UID',  document.getElementById('partnerUID').value],
+    ['PRM',          document.getElementById('prmName').value],
+    ['Sponsorship',  document.getElementById('sponsorshipName').value],
+    ['Duration',     getDuration()],
+    ['Payout Logic', payoutLogic],
+  ];
+  slots.forEach((slot,i) => {
+    rows.push([`Metric ${i+1}`, slot.metric||'']);
+    rows.push([`Metric ${i+1} Target`, slot.sponsTarget]);
+    rows.push([`Metric ${i+1} Monthly Target`, slot.monthlyTarget]);
+    rows.push([`Metric ${i+1} Worst`, slot.scenarios.worst]);
+    rows.push([`Metric ${i+1} Base`,  slot.scenarios.base]);
+    rows.push([`Metric ${i+1} Best`,  slot.scenarios.best]);
+    rows.push([`Metric ${i+1} Payout Worst`, slot.payouts.worst]);
+    rows.push([`Metric ${i+1} Payout Base`,  slot.payouts.base]);
+    rows.push([`Metric ${i+1} Payout Best`,  slot.payouts.best]);
+  });
+  rows.push(['Estimated Revenue', document.getElementById('estRevInput').value||'']);
+  rows.push(['Sponsorship Cost',  document.getElementById('sponsorCost').value||'']);
+  const csv = rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download = 'sponsorship_' + (document.getElementById('partnerUID').value||'partner') + '.csv';
+  a.click();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// UTILITY
+// ══════════════════════════════════════════════════════════════════
+function fmt(v, dec=2) {
+  if (v===null||v===undefined||isNaN(v)) return '--';
+  return Number(v).toLocaleString('en-US',{maximumFractionDigits:dec});
+}
+</script>
+</body>
+</html>
