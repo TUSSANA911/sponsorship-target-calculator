@@ -1,204 +1,274 @@
-# sponsorship-target-calculator
+# Sponsorship Target Calculator
 
-**A data-driven sponsorship planning and ROI analysis tool for Exness Partner Relationship Managers (PRMs).**
+**A data-driven sponsorship planning and ROI tool for Exness Partner Relationship Managers (PRMs).**
 
-The Sponsorship Target Calculator is an interactive web application designed to support the evaluation, planning, and justification of partner sponsorship proposals.
+The Sponsorship Target Calculator standardises how PRMs set targets, define payout mechanics, and justify partner sponsorships. Every proposal follows the same structure, so BD Operations can review and validate tasks faster and more consistently.
 
-It combines historical partner performance, statistical analysis, KPI target setting, scenario forecasting, and incentive payout calculations into a single interface.
+It combines historical partner performance, statistical analysis, KPI target setting, scenario forecasting, payout calculation, and ROI justification in a single browser-based interface.
 
 ### Live Application
 
-**[Open Sponsorship Target Calculator](https://tussana911.github.io/sponsorship-target-calculator/)**
+- **GitHub Pages:** [tussana911.github.io/sponsorship-target-calculator](https://tussana911.github.io/sponsorship-target-calculator/)
+
+---
+
+## What's New in This Version
+
+- **Duration first.** Sponsorship Duration and Rounding now sit inside Section 1, before metric selection, so the time frame is set before any target is calculated.
+- **Simplified layout.** The tool now has 6 sections instead of 7.
+- **Focused metric list.** The metric selector is limited to the 9 KPIs used in sponsorship tasks.
+- **Month label auto-fill.** Set the data year and month range, and the data table labels itself (for example `Jun/2025` to `May/2026`), including ranges that cross year-end.
+- **BD Ops validation flow.** PRMs export a timestamped JSON file, and BD Ops imports it in Section 6 to see exactly what was submitted.
+
+---
+
+## Application Structure
+
+| Section | Name | Purpose |
+| ------- | ---- | ------- |
+| 1 | Metric Target Setup | Partner details, sponsorship duration, rounding, and up to 3 metric cards |
+| 2 | Payout Structure | Upfront payment, payout logic, and combined payout projection |
+| 3 | ROI and Business Justification | Estimated incremental revenue, sponsorship cost, and ROI |
+| 4 | Live Summary | Real-time overview of all metrics, targets, scenarios, and payouts |
+| 5 | Export Summary | Proposal summary generator, JSON export, and JIRA request link |
+| 6 | BD Ops Validation | JSON import for independent review of submitted proposals |
 
 ---
 
 ## Key Features
 
-### 1. Multi-Metric KPI Target Setting
-Configure up to **3 independent performance metrics** for each sponsorship proposal.
+### 1. Sponsorship Duration and Rounding
 
-Supported metrics include:
-- First Time Deposits (FTD)
-- Active Traders
-- First Time Traders (FTT)
-- Unique First Time Traders (UFTT)
-- Loyal Monthly Active Users (LMAU)
-- LMAU High Value
-- Trading Volume (Lots / USD)
-- New Sub-Partners
+Set once in Section 1 and shared across all metrics.
 
-Each metric has independent historical data, statistical analysis, growth targets, and payout configurations.
+- Duration: 1, 3, 6, 12 months, or custom
+- Rounding: none, round up, round down, nearest integer, nearest 5, nearest 10
 
-### 2. Historical Performance Analysis
-Analyze partner performance using manually entered data or pasted CSV values.
+When rounding is active, targets and scenario figures display as whole numbers.
 
-Statistical indicators include:
-- Mean and Median
-- Standard Deviation
-- Coefficient of Variation (CV)
-- Minimum and Maximum
-- Latest Performance
-- Historical Distribution Visualization
+### 2. Multi-Metric KPI Target Setting
 
-The calculator provides statistical guidance to support appropriate baseline selection.
+Configure up to **3 independent metrics** per sponsorship proposal. Supported metrics:
 
-### 3. Flexible Sponsorship Target Calculation
-Generate performance targets using historical baselines and configurable growth uplift.
+| Metric | Description |
+| ------ | ----------- |
+| FTD | First Time Deposits within the month |
+| Active Traders | Clients who opened and closed at least 1 trade in the month |
+| FTT | Clients placing their first trade within the month |
+| UFTT | Unique First Time Trade |
+| LMAU | Loyal Monthly Active Users |
+| LMAU High Value | Loyal Monthly Active Users, high value segment |
+| Trading Volume - Lots | Closed traded lots |
+| Trading Volume - USD | Trading volume in USD |
+| Sub-partners | New sub-partners registered under the partner |
 
-**Target Calculation:**
+**Metric guidance:** use Active Traders for retention objectives, and FTD or FTT for new client acquisition.
 
-`Total Target = Monthly Baseline × (1 + Growth Uplift %) × Sponsorship Duration`
+Each metric card has its own historical data, statistics, baseline, uplift, scenarios, payout configuration, and validation report link.
 
-Available baseline methods:
-- Mean
-- Median
-- Latest Month
-- Best Month
-- Worst Month
-- Custom Baseline
+### 3. Historical Performance Input
 
-Supports configurable rounding and sponsorship durations.
+- Manual data table (12 rows by default, editable)
+- Paste parser for comma, tab, or line-separated values copied from MetaBase
+- Screenshot upload for visual reference
+- Data year and month range selector that auto-fills month labels in `MMM/YYYY` format
 
-### 4. Scenario-Based Forecasting
-Evaluate performance outcomes under three customizable scenarios:
+### 4. Statistical Analysis and Baseline Guidance
+
+Each metric calculates mean, median, standard deviation, coefficient of variation (CV), minimum, maximum, latest value, and data count.
+
+A distribution chart (histogram with a smoothed curve) shows the shape of the data and highlights the suggested baseline:
+
+- **Yellow:** suggested baseline
+- **Grey:** not suggested
+
+Median is recommended when CV is above 25% or the mean and median differ significantly. Otherwise, mean is recommended.
+
+### 5. Target Calculation
+
+Baseline options: Mean, Median, Latest Month, Best Month, Worst Month, or Custom.
+
+```
+Total Target   = Monthly Baseline x Sponsorship Duration x (1 + Growth Uplift %)
+Monthly Target = Total Target / Sponsorship Duration
+```
+
+Growth uplift options: 0%, 10%, 20%, 30%, 50%, or custom.
+
+### 6. Scenario Planning
+
+Each metric has its own scenario percentages:
 
 | Scenario | Default Achievement |
-|---|---|
+| -------- | ------------------- |
 | Worst Case | 50% |
 | Base Case | 100% |
 | Best Case | 200% |
 
-Each scenario generates projected KPI achievements and corresponding incentive payouts.
+Each scenario shows the projected total and monthly achievement.
 
-### 5. Flexible Incentive Payout Structures
-Supports four payout models:
+### 7. Payout Structures
 
-| Model | Description |
-|---|---|
-| Per Unit | Fixed incentive for each achieved unit |
-| Fixed Budget | Fixed sponsorship budget, optionally prorated |
-| Tiered | Cumulative incentives across performance tiers |
-| Milestone | Fixed reward for the highest qualifying threshold |
+Each metric can use one of four payout models:
 
-Additional configurations:
-- Optional monthly upfront payments
-- Independent metric payouts
-- All-or-Nothing qualification
-- Manager Discretion (subject to approval)
+| Model | How It Works |
+| ----- | ------------ |
+| Per Unit | Fixed reward for each achieved unit |
+| Fixed Budget | Lump sum when the target is met, optionally prorated |
+| Tiered | Cumulative reward rate across performance tiers |
+| Milestone | Flat reward for the highest threshold reached in the month |
 
-### 6. Sponsorship ROI Analysis
-Estimate the commercial viability of sponsorship investments.
+Rewards are evaluated monthly and multiplied by the sponsorship duration.
 
-**ROI Formula:**
+### 8. Payout Logic and Upfront Payment
 
-`ROI (%) = (Estimated Incremental Revenue − Sponsorship Cost) / Sponsorship Cost × 100`
+How multiple metric payouts combine:
 
-The calculator provides estimated revenue, sponsorship cost, net impact, and ROI evaluation.
+| Logic | Behaviour |
+| ----- | --------- |
+| Independent | Each metric pays separately. Total equals the sum of all metric payouts. |
+| All-or-Nothing | All metrics must reach 100% of target. If any metric misses, performance payout is $0. A warning is shown. |
+| Manager Discretion | Payout is calculated from achievement % and marked as pending CD/RD approval. |
 
-Revenue assumptions should be based on incremental business generated by the sponsorship rather than existing baseline revenue.
+An optional monthly **upfront payment** is paid regardless of performance. It is added only to the Combined Payout Projection, not to individual metric payouts.
 
-### 7. JIRA Sponsorship Proposal Generator
-Automatically generate a structured proposal summary containing:
+### 9. ROI and Business Justification
 
-- WHAT — Sponsorship initiative
-- WHY — Business justification
-- HOW — Target and incentive mechanism
-- Historical performance baseline
-- Expected results and payout scenarios
-- Sponsorship ROI calculation
-- Supporting validation report references
+```
+ROI (%) = (Estimated Incremental Revenue - Sponsorship Cost) / Sponsorship Cost x 100
+```
 
-The generated output can be copied into the relevant Partner Sponsorship Request.
+- Total Sponsorship Cost auto-fills from the Best Case combined payout, including upfront
+- PRMs enter estimated revenue and explain the calculation logic
+- Revenue should be based on **incremental SR only**, excluding baseline SR from the partner's existing business
 
-### 8. JSON Export and Import
-Export sponsorship configurations into JSON files for documentation and independent validation.
+### 10. Proposal Summary Generator
 
-Import functionality allows another reviewer to restore the submitted configuration and recalculate the results.
+Generates a structured summary in the Exness Partner Sponsorship Request format:
 
-This supports PRM-to-BD Ops review and validation workflows.
+- WHAT, WHY, and HOW
+- Targets, baselines, and uplift per metric
+- Payout logic
+- Expected results and payouts per scenario
+- ROI calculation logic
+- Supporting files, including MetaBase or Tableau validation links
+
+The **Partner Sponsorship Request** button opens the JIRA service desk form directly.
+
+### 11. JSON Export and BD Ops Validation
+
+**PRM workflow**
+
+1. Complete the calculator
+2. Generate and copy the summary into JIRA
+3. Click **Export JSON** in Section 5
+4. Attach the JSON file to the Partner Sponsorship Request
+
+The file name includes the partner UID, sponsorship name, and export time, for example:
+
+```
+sponsorship_123456789_TH_FTD_Booster_2026-06-11_14-35-22.json
+```
+
+**BD Ops workflow**
+
+1. Download the JSON file from the JIRA task
+2. Open the calculator and go to Section 6
+3. Click **Import JSON (BD Ops validation)**
+4. Review the PRM's exact inputs, targets, scenarios, and payouts
 
 ---
 
 ## How to Use
 
-1. Enter the partner name, UID, PRM name, and sponsorship details.
-2. Select up to three KPI metrics.
-3. Enter historical monthly performance data.
-4. Review statistical indicators and select a baseline.
-5. Configure growth uplift and sponsorship duration.
-6. Define incentive payout structures.
-7. Review worst-case, base-case, and best-case scenarios.
-8. Estimate incremental revenue and sponsorship ROI.
-9. Generate the sponsorship proposal summary.
-10. Export the JSON configuration for documentation and validation.
+1. Enter partner name, UID, PRM name, sponsorship name, and notes.
+2. Set the sponsorship duration and rounding.
+3. Add up to 3 metrics and select each KPI.
+4. Add the validation report link and the data year and month range.
+5. Enter or paste historical monthly data.
+6. Review statistics and the distribution chart, then select a baseline.
+7. Set growth uplift and scenario percentages.
+8. Configure the payout type for each metric.
+9. Set upfront payment and payout logic in Section 2.
+10. Enter estimated revenue and revenue logic in Section 3.
+11. Review the Live Summary in Section 4.
+12. Generate the summary, export the JSON file, and submit the JIRA request.
 
 ---
 
 ## Technology Stack
 
 | Technology | Purpose |
-|---|---|
+| ---------- | ------- |
 | HTML5 | Application structure |
-| CSS3 | Responsive layout and styling |
+| CSS3 | Responsive layout and Exness brand styling |
 | Vanilla JavaScript | Calculation engine and interactivity |
-| Canvas API | Statistical data visualization |
-| JSON | Configuration export and import |
-| GitHub Pages | Static website hosting |
+| Canvas API | Distribution chart |
+| JSON | Export and import of saved state |
+| GitHub Pages / Netlify | Static hosting |
 
-The application runs entirely in the browser and does not require a backend server.
+The application is a single `index.html` file and runs entirely in the browser. No backend or build step is required.
 
 ---
 
 ## Deployment
 
-The application is hosted through GitHub Pages.
+**GitHub Pages**
 
-To deploy your own version:
+1. Make sure the application file is named `index.html`.
+2. Open **Settings**, then **Pages**.
+3. Choose **Deploy from a branch**, select `main` and `/ (root)`, and save.
 
-1. Fork or clone this repository.
-2. Ensure the application entry file is named `index.html`.
-3. Open **Settings → Pages**.
-4. Choose **Deploy from a branch**.
-5. Select `main` and `/(root)`.
-6. Save and wait for deployment.
+GitHub Pages redeploys automatically after each commit to `main`.
 
-GitHub Pages automatically redeploys the application after changes are committed to the publishing branch.
+**Netlify**
+
+If the Netlify site is linked to this repository, it redeploys automatically after each commit. If it was created by drag and drop, upload the new `index.html` in the site's **Deploys** tab.
 
 ---
 
 ## Data Handling and Security
 
-The calculator performs calculations locally in the browser.
+- All calculations run locally in the browser.
+- No database, server, or user accounts.
+- JSON export creates a local file. JSON import reads only the file the user selects.
 
-- No backend database is included.
-- Input data is processed client-side.
-- JSON export produces a downloadable local file.
-- JSON import reads a file selected by the user.
-- The application does not implement user authentication or access controls.
-
-**Important:** This application is intended to support internal sponsorship analysis. Do not enter confidential partner or company information into a publicly hosted deployment without appropriate organizational authorization.
-
-Public GitHub repositories and GitHub Pages websites should not be treated as private environments.
+**Important:** This tool supports internal sponsorship analysis. Public GitHub repositories and public websites are not private environments. Do not commit partner data or confidential company information to this repository.
 
 ---
 
 ## Disclaimer
 
-This application is a decision-support tool for sponsorship planning.
-
-Calculated targets, incentive payouts, and ROI projections are estimates based on user-provided assumptions.
-
-Results do not constitute sponsorship approval and should be reviewed against applicable company policies, eligibility requirements, and approval procedures.
+This is a decision-support tool. Targets, payouts, and ROI figures are estimates based on user inputs and assumptions. Results do not constitute sponsorship approval and must be reviewed against applicable company policies and approval procedures.
 
 ---
 
 ## Version
 
-**Version:** 2.0  
-**Application:** Sponsorship Target Calculator  
-**Category:** Partnership Management / Business Development / Financial Planning  
-**Deployment:** GitHub Pages
+| Field | Value |
+| ----- | ----- |
+| Version | 2.1 |
+| Application | Sponsorship Target Calculator |
+| Owner | ARM Tussananakajit, Partner Relationship Manager, Exness |
+| Category | Partnership Management / Business Development |
+
+### Changelog
+
+**2.1**
+- Moved Sponsorship Duration and Rounding into Section 1, before metric selection
+- Reduced the application from 7 sections to 6
+- Limited the metric list to 9 sponsorship KPIs
+- Added month label auto-fill with cross-year support
+- Added Section 6 BD Ops Validation with JSON import
+- Added timestamp to JSON export file names
+
+**2.0**
+- Multi-metric support (up to 3 metrics)
+- Payout logic: Independent, All-or-Nothing, Manager Discretion
+- Per-metric scenario planning
+- Combined payout projection with shared upfront payment
+- Milestone payout model
 
 ---
 
-*Developed to support structured, transparent, and data-driven sponsorship decision-making.*
+*Built to make sponsorship decisions structured, transparent, and data-driven.*
